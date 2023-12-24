@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "private",
         validate: {
           isIn: {
-            args: [["private", "group", "community"]],
+            args: [["private", "group"]],
             msg: "Please provide a valid chat type",
           },
         },
