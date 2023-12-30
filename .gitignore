@@ -1,8 +1,10 @@
 # Client
 client/node_modules
+client/dist
 client/package-lock.json
 client/build
-
+client/dist-ssr
+client/*.local
 
 # Server
 /node_modules
