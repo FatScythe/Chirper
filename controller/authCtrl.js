@@ -4,12 +4,12 @@ const createTokenUser = require("../utils/createTokenUser");
 const { attachCookieToResponse } = require("../utils/jwt");
 
 const register = async (req, res) => {
-  const { name, password, email, phoneNumber } = req.body;
-  if (!name || !password || !email || !phoneNumber) {
+  const { name, password, email } = req.body;
+  if (!name || !password || !email) {
     throw new BadRequestError("Please fill all fields!");
   }
 
-  await User.create({ name, password, email, phoneNumber });
+  await User.create({ name, password, email });
 
   res.status(201).json({ msg: "User created!" });
 };
