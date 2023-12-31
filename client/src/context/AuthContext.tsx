@@ -1,17 +1,16 @@
 // AuthContext
 import { createContext, useContext, useState } from "react";
 import { IUser, UserContextType } from "../model/user";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Create a context to manage authentication-related data and functions
-const AuthContext = createContext <UserContextType>({
-    isLoading: false,
-    user: null,
-    login: async () => {},
-    register: async () => {},
-    logout: async () => {},
-  });
-  
+const AuthContext = createContext<UserContextType>({
+  isLoading: false,
+  user: null,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+});
 
 // Create a hook to access the AuthContext
 const useAuth = () => useContext(AuthContext);
@@ -20,18 +19,28 @@ const useAuth = () => useContext(AuthContext);
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-//   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<IUser|null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
+
+  const navigate = useNavigate();
 
   const register = async (formData: {
-    name: string,
-    email: string,
-    password: string,
+    name: string;
+    email: string;
+    password: string;
   }) => {
+    const { name, email, password } = formData;
     setIsLoading(true);
-    const response = await fetch("", {
+
+    if (!name || !email || !password) {
+      setIsLoading(false);
+      alert("Please fill all fields");
+      return;
+    }
+
+    const response = await fetch("/api/v1/auth/register", {
       method: "POST",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(formData),
     });
     const data = await response.json();
@@ -39,17 +48,19 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!response.ok) {
       setIsLoading(false);
       alert(data ? data.msg : "Something went wrong");
+      return;
     }
 
-    setUser(data);
     setIsLoading(false);
-    // navigate("/login");
+
+    navigate("/login");
   };
 
-  const login = async (formData: { email: string, password: string }) => {
+  const login = async (formData: { email: string; password: string }) => {
     setIsLoading(true);
-    const response = await fetch("", {
+    const response = await fetch("/api/v1/auth/login", {
       method: "POST",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(formData),
     });
     const data = await response.json();
@@ -57,24 +68,26 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!response.ok) {
       setIsLoading(false);
       alert(data ? data.msg : "Something went wrong");
+      return;
     }
 
     setUser(data);
     setIsLoading(false);
-    // navigate("/chat");
+    navigate("/chats");
   };
 
   const logout = async () => {
-    const response = await fetch("");
+    const response = await fetch("/api/v1/auth/logout");
     const data = await response.json();
 
     if (!response.ok) {
       setIsLoading(false);
       alert(data ? data.msg : "Something went wrong");
+      return;
     }
 
     setUser(null);
-    // navigate("/login");
+    navigate("/login");
   };
 
   return (
@@ -85,5 +98,3 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 export { AuthContext, AuthProvider, useAuth };
-
-
