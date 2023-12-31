@@ -1,13 +1,29 @@
 import "./App.css";
+// Context
+import { useAuth } from "./context/AuthContext";
 // Router
-import { RouterProvider } from "react-router-dom";
-import router from "./routes";
+import { Routes, Route, Navigate } from "react-router-dom";
+// Pages
+import Chat from "./pages/Chat";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import NotFound from "./pages/Notfound";
 
 function App() {
+  const { isLoading, user } = useAuth();
   return (
-    <div>
-      <RouterProvider router={router} />
-    </div>
+    <>
+      <Routes>
+        <Route path='/' element={<Navigate to='/chats' />} />
+        <Route
+          path='/chats'
+          element={!isLoading && user ? <Chat /> : <Navigate to='/login' />}
+        />
+        <Route path='/register' element={<Register />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='*' element={<NotFound />} />
+      </Routes>
+    </>
   );
 }
 
