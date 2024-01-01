@@ -22,6 +22,7 @@ app.get("/health-check", (req, res) => {
 app.use("/api/v1/auth", require("./routes/authRoutes"));
 app.use("/api/v1/chat", require("./routes/chatRoutes"));
 app.use("/api/v1/message", require("./routes/messageRoutes"));
+app.use("/api/v1/user", require("./routes/userRoutes"));
 
 app.use(errorMiddleware);
 app.use(notFoundMiddleware);
