@@ -1,5 +1,5 @@
 // AuthContext
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { IUser, UserContextType } from "../model/user";
 import { useNavigate } from "react-router-dom";
 
@@ -23,6 +23,24 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<IUser | null>(null);
 
   const navigate = useNavigate();
+
+  const fetchUser = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/v1/user/showMe");
+    const data = await response.json();
+
+    if (!response.ok) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(false);
+    setUser(data);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const register = async (formData: {
     name: string;
