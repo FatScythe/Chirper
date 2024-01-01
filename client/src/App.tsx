@@ -19,8 +19,14 @@ function App() {
           path='/chats'
           element={!isLoading && user ? <Chat /> : <Navigate to='/login' />}
         />
-        <Route path='/register' element={<Register />} />
-        <Route path='/login' element={<Login />} />
+        <Route
+          path='/register'
+          element={!user ? <Register /> : <Navigate to='/chats' />}
+        />
+        <Route
+          path='/login'
+          element={!user ? <Login /> : <Navigate to='/chats' />}
+        />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>
