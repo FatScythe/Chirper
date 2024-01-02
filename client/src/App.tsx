@@ -18,7 +18,9 @@ function App() {
         <Route
           path='/chats'
           element={!isLoading && user ? <Chat /> : <Navigate to='/login' />}
-        />
+        >
+          <Route index element={<div>Single Chat</div>} />
+        </Route>
         <Route
           path='/register'
           element={!user ? <Register /> : <Navigate to='/chats' />}
