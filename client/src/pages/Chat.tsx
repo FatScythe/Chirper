@@ -1,13 +1,12 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 // Context
 // import { useAuth } from "../context/AuthContext";
 // Components
-import SingleChat from "../component/chat/SingleChat";
+import AllChats from "../component/chat/AllChats";
 
 const Chat = () => {
-  // const {isLoading} = useAuth();
-  // console.log(isLoading, "here");
-  const [isChatsOpen, setIsChatsOpen] = useState<Boolean>(true);
+  const [isChatsOpen, setIsChatsOpen] = useState(true);
   return (
     <section className='grid grid-cols-12 h-screen relative sm:static bg-dark/90 text-white overflow-hidden'>
       <aside
@@ -28,22 +27,13 @@ const Chat = () => {
             className='bg-transparent border-transparent border border-b-primary w-full outline-none focus:border-2'
           />
         </div>
-
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
-        <SingleChat />
+        <AllChats />
       </aside>
       <main className='col-span-12 sm:col-span-8'>
         <h1 className='text-xl font-bold' onClick={() => setIsChatsOpen(true)}>
           Single Chat
         </h1>
+        <Outlet />
       </main>
     </section>
   );
