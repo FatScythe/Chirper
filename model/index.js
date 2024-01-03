@@ -24,9 +24,6 @@ models.Chat.belongsToMany(models.User, {
   foreignKey: "chatId",
 });
 
-// Puts a MemberUserId colums in the chat table, useful for private chat
-models.Member.hasMany(models.Chat);
-
 // User X Message Many-to-One
 models.User.hasMany(models.Message);
 models.Message.belongsTo(models.User);
