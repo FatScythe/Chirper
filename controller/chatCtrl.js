@@ -1,4 +1,4 @@
-const { User, Chat, Message } = require("../model");
+const { User, Chat, Message, Member } = require("../model");
 const {
   BadRequestError,
   NotFoundError,
@@ -12,7 +12,7 @@ const createChat = async (req, res) => {
       the chat type "private" | "group" and if it's a private type a participant id is required.
       It also checks the if the chat as been created before
   */
-  const { name, chatType, memberId } = req.body;
+  const { name, chatType, memberIDs } = req.body;
   const userId = req.user.userId;
 
   const user = await User.findOne({
@@ -29,48 +29,37 @@ const createChat = async (req, res) => {
     throw new BadRequestError("Please provide a chat type");
   }
 
+  if (!memberIDs || memberIDs.length < 1) {
+    throw new BadRequestError("Please provide a member");
+  }
+
   if (chatType === "private") {
-    if (!memberId) {
-      throw new BadRequestError("Please provide a member");
+    if (memberIDs.length > 1) {
+      throw new BadRequestError("Private chats can only have one member");
     }
 
-    const member = await User.findOne({
-      where: {
-        id: memberId,
-      },
-    });
-
-    if (!member) {
-      throw new BadRequestError("Chat member not found");
-    }
-
-    // Checks if a private chat as been created by current user
-    const isChatYours = await Chat.findOne({
-      where: {
-        chatType: "private",
-        createdBy: userId,
-        MemberUserId: userId,
-        name: "You",
-      },
-    });
-
-    if (isChatYours) {
-      if (isChatYours.MemberUserId == memberId)
-        throw new BadRequestError("Chat as already been created by you!");
+    // Checks if a private chat as been created by the current user
+    if (userId === memberIDs[0]) {
+      const isChatYours = await Chat.findOne({
+        where: {
+          chatType: "private",
+          createdBy: userId,
+          name: "Me(You)",
+          members: [memberIDs[0]],
+        },
+      });
+      if (isChatYours) throw new BadRequestError("Self chat already exist");
     }
 
     // Checks if a private chat as been created between current user and a member
     const isChatExist = await Chat.findOne({
       where: {
         chatType: "private",
-        createdBy: {
-          [Op.or]: [userId, memberId],
-        },
-        MemberUserId: {
-          [Op.or]: [memberId, userId],
-        },
-        name: {
-          [Op.not]: "You",
+        members: {
+          [Op.or]: [
+            [memberIDs[0], userId],
+            [userId, memberIDs[0]],
+          ],
         },
       },
     });
@@ -79,19 +68,29 @@ const createChat = async (req, res) => {
       throw new BadRequestError("Chat as already been created!");
     }
 
+    // Creates chat
     const chat = await user.createChat({
-      name: userId === memberId ? "You" : "", // If chat is a self-chat
+      name: memberIDs.includes(userId) ? "Me(You)" : "", // If chat is a self-chat
       chatType,
       createdBy: userId,
-      MemberUserId: memberId,
+      members: memberIDs.includes(userId) ? [userId] : [userId, ...memberIDs],
     });
 
-    await chat.addUser(member); // Adds chat member to junction model
+    await chat.addUser(memberIDs[0]); // Adds chat member to the junction model
   } else {
     if (!name) {
       throw new BadRequestError("Please provide a chat name");
     }
-    await user.createChat({ name, chatType, createdBy: userId });
+    const chat = await user.createChat({
+      name,
+      chatType,
+      createdBy: userId,
+      members: [userId, ...memberIDs],
+    });
+
+    for (let id of memberIDs) {
+      await chat.addUser(id);
+    }
   }
 
   res.status(201).json({ msg: "Chat created" });
@@ -113,7 +112,7 @@ const getMyChats = async (req, res) => {
     throw new NotFoundError("User does not exist");
   }
 
-  const chats = await user.getChats();
+  const chats = await user.getChats({ include: [User, Message] });
 
   res.status(200).json({ nb: chats.length, chats });
 };
@@ -130,7 +129,7 @@ const getSingleChat = async (req, res) => {
     where: {
       id: chatId,
     },
-    include: { model: Message },
+    include: [User, Message],
   });
 
   const isChatMember = await chat.hasUser(userId);
@@ -163,7 +162,9 @@ const deleteChat = async (req, res) => {
   if (chat.chatType === "private") {
     if (chat.createdBy === userId) {
       await chat.destroy();
-    } else if (chat.MemberUserId === userId) {
+    } else if (chat.members.includes(userId)) {
+      chat.members = chat.members.filter((member) => member !== userId);
+      await chat.save();
       await chat.removeUser(userId);
     } else {
       throw new UnauthorizedError(
