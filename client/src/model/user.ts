@@ -1,5 +1,6 @@
 export interface IUser {
-  id: number | null;
+  id: number;
+  userId?: number | null;
   name: string | null;
   avatar: string | null;
   readonly password?: string | null;
