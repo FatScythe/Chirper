@@ -1,31 +1,32 @@
 // Component
-import SingleChat from "./SingleChat";
+import ChatItem from "./ChatItem";
 // Context
 import { useChat } from "../../context/ChatContext";
 
 const AllChats = () => {
-  const { loading, getChats, myChats } = useChat();
-
-  //   getChats();
-  //   console.log(loading, myChats);
+  const { loading, myChats } = useChat();
 
   if (loading) {
-    return <div>loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!myChats && !loading) {
-    <div>Error...</div>;
+    return <div>Error...</div>;
   }
-  if (myChats && myChats?.nb < 1) {
+  if (myChats && myChats.nb < 1) {
     <div>You have no chats yet</div>;
   }
 
-  console.log(myChats?.chats);
+  if (!myChats) {
+    return <div>Error...</div>;
+  }
 
   return (
     <div>
-      <div className='overflow-x-hidden overflow-y-scroll h-screen scroll-m-0'>
-        <SingleChat />
+      <div className='overflow-x-hidden overflow-y-scroll h-screen scroll-m-0 no-scrollbar'>
+        {myChats.chats.map((chat) => (
+          <ChatItem chat={chat} key={chat.id} />
+        ))}
       </div>
     </div>
   );
