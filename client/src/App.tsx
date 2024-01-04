@@ -8,6 +8,7 @@ import Chat from "./pages/Chat";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import NotFound from "./pages/Notfound";
+import SingleChat from "./component/chat/Chat";
 
 function App() {
   const { isLoading, user } = useAuth();
@@ -19,7 +20,8 @@ function App() {
           path='/chats'
           element={!isLoading && user ? <Chat /> : <Navigate to='/login' />}
         >
-          <Route index element={<div>Single Chat</div>} />
+          <Route index element={<div>Pick a Chat</div>} />
+          <Route path='/chats/:id' element={<SingleChat />} />
         </Route>
         <Route
           path='/register'
