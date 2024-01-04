@@ -1,8 +1,13 @@
+import { IUser } from "./user";
+
 type chatType = "private" | "group";
 
 export interface IChat {
+  id: number;
   name?: string | null;
   chatType: chatType | null;
+  users: IUser[];
+  members: number[];
   createdBy: number | null;
   createdAt?: string | null;
   updatedAt?: string | null;
