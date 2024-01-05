@@ -9,6 +9,8 @@ import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   chat: IChat;
+  isChatsOpen: boolean;
+  setIsChatsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const getChatInfo = (chat: IChat, user: IUser) => {
@@ -48,7 +50,7 @@ const getChatInfo = (chat: IChat, user: IUser) => {
 };
 
 const ChatItem = (props: Props) => {
-  const { chat } = props;
+  const { chat, isChatsOpen, setIsChatsOpen } = props;
   const { user } = useAuth();
   if (!user) {
     return <Navigate to='/' />;
@@ -57,7 +59,8 @@ const ChatItem = (props: Props) => {
   return (
     <Link
       to={"/chats/" + chat.id}
-      className='flex justify-start items-center gap-4 my-2 p-2 rounded-md hover:bg-white/5'
+      className='flex justify-start items-center gap-4 my-2 sm:p-2 rounded-md hover:bg-white/5'
+      onClick={() => setIsChatsOpen(!isChatsOpen)}
     >
       <img
         src={

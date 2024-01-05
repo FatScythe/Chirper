@@ -1,11 +1,23 @@
+import { useEffect } from "react";
 // Component
 import ChatItem from "./ChatItem";
 // Context
 import { useChat } from "../../context/ChatContext";
+// Hook
+import useTitle from "../../hooks/useTitle";
 
-const AllChats = () => {
-  const { loading, myChats } = useChat();
+type Props = {
+  isChatsOpen: boolean;
+  setIsChatsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
+const AllChats = (props: Props) => {
+  const { loading, myChats, getChats } = useChat();
+
+  useTitle("All chats");
+  useEffect(() => {
+    getChats();
+  }, []);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -25,7 +37,12 @@ const AllChats = () => {
     <div>
       <div className='overflow-x-hidden overflow-y-scroll h-screen scroll-m-0 no-scrollbar'>
         {myChats.chats.map((chat) => (
-          <ChatItem chat={chat} key={chat.id} />
+          <ChatItem
+            chat={chat}
+            key={chat.id}
+            isChatsOpen={props.isChatsOpen}
+            setIsChatsOpen={props.setIsChatsOpen}
+          />
         ))}
       </div>
     </div>

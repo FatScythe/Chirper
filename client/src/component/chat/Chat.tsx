@@ -1,8 +1,14 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+// Components
+import MessageInput from "../message/MessageInput";
+// Hook
+import useTitle from "../../hooks/useTitle";
+import { useChatOpen } from "../../pages/Chat";
 
 const SingleChat = () => {
   const { id: chatId } = useParams();
+  useTitle("Chat");
 
   if (chatId == undefined) {
     return <Navigate to='/' />;
@@ -11,6 +17,9 @@ const SingleChat = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [chat, setChat] = useState(null);
+
+  const { setIsChatsOpen } = useChatOpen();
+  const navigate = useNavigate();
 
   const getSingleChat = async (chatId: string) => {
     try {
@@ -48,7 +57,25 @@ const SingleChat = () => {
 
   console.log(chat);
 
-  return <section>A Single Chat</section>;
+  return (
+    <section className='flex flex-col justify-between h-screen gap-2 py-1'>
+      <div
+        className='border border-red-200 basis-1/12'
+        onClick={() => {
+          navigate("/chats");
+          setIsChatsOpen(true);
+        }}
+      >
+        {/* <ChatHeader /> */} Header
+      </div>
+      <div className='border border-red-200 basis-5/6'>
+        {/* <Messages /> */} Messages
+      </div>
+      <div className='mx-auto w-full basis-1/12'>
+        <MessageInput />
+      </div>
+    </section>
+  );
 };
 
 export default SingleChat;
