@@ -17,3 +17,7 @@
         /* Firefox */
     }
 }
+
+.chat-item.active {
+    @apply bg-white/5;
+}
