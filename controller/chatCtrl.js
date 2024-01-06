@@ -112,7 +112,13 @@ const getMyChats = async (req, res) => {
     throw new NotFoundError("User does not exist");
   }
 
-  const chats = await user.getChats({ include: [User, Message] });
+  const chats = await user.getChats({
+    include: [User, Message],
+    order: [
+      ["updatedAt", "DESC"], // Order Chats based on updatedAt time
+      [{ model: Message }, "createdAt", "ASC"], // Order messages based on createdAt Time
+    ],
+  });
 
   res.status(200).json({ nb: chats.length, chats });
 };
