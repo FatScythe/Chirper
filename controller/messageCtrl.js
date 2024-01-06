@@ -27,7 +27,7 @@ const getChatMessages = async (req, res) => {
 
   const messages = await chat.getMessages({ order: [["createdAt", "ASC"]] });
 
-  res.status(200).json({ messages });
+  res.status(200).json(messages);
 };
 
 const createMessage = async (req, res) => {
@@ -58,6 +58,11 @@ const createMessage = async (req, res) => {
   }
 
   await chat.createMessage({ text, sender });
+
+  chat.changed("updatedAt", true);
+  await chat.update({
+    updatedAt: new Date(),
+  }); // This just updates the chat updatedAT column
 
   res.status(201).json({ msg: "Message sent" });
 };
