@@ -1,10 +1,13 @@
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 // Components
 import MessageInput from "../message/MessageInput";
+import ChatMessages from "../message/ChatMessages";
 // Hook
 import useTitle from "../../hooks/useTitle";
 import { useChatOpen } from "../../pages/Chat";
+// Types
+import { IChat } from "../../model/chat";
 
 const SingleChat = () => {
   const { id: chatId } = useParams();
@@ -16,10 +19,9 @@ const SingleChat = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [chat, setChat] = useState(null);
+  const [chat, setChat] = useState<IChat | null>(null);
 
   const { setIsChatsOpen } = useChatOpen();
-  const navigate = useNavigate();
 
   const getSingleChat = async (chatId: string) => {
     try {
@@ -39,7 +41,6 @@ const SingleChat = () => {
       setLoading(false);
       setError(true);
       console.error(err);
-      return;
     }
   };
 
@@ -55,24 +56,26 @@ const SingleChat = () => {
     return <div>Error...</div>;
   }
 
-  console.log(chat);
-
   return (
     <section className='flex flex-col justify-between h-screen gap-2 py-1'>
       <div
-        className='border border-red-200 basis-1/12'
-        onClick={() => {
-          navigate("/chats");
-          setIsChatsOpen(true);
-        }}
+        className='basis-1/12 p-2 flex justify-start items-center gap-4'
+        onClick={() => setIsChatsOpen(true)}
       >
-        {/* <ChatHeader /> */} Header
+        <div>
+          <img src='' className='rounded-full w-8 h-8 border' alt='pf' />
+        </div>
+
+        <div>
+          <h2 className='font-semibold'>Chat name</h2>
+          <small>typing... / last-seen/if group list of users</small>
+        </div>
       </div>
-      <div className='border border-red-200 basis-5/6'>
-        {/* <Messages /> */} Messages
+      <div className='basis-5/6'>
+        <ChatMessages chatId={chatId} />
       </div>
       <div className='mx-auto w-full basis-1/12'>
-        <MessageInput />
+        <MessageInput chatId={chatId} />
       </div>
     </section>
   );
