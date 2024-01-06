@@ -20,7 +20,14 @@ function App() {
           path='/chats'
           element={!isLoading && user ? <Chat /> : <Navigate to='/login' />}
         >
-          <Route index element={<div>Pick a Chat</div>} />
+          <Route
+            index
+            element={
+              <div className='grid place-items-center text-3xl italic font-semibold h-screen'>
+                Pick or create a Chat
+              </div>
+            }
+          />
           <Route path='/chats/:id' element={<SingleChat />} />
         </Route>
         <Route
