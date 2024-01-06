@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 // Types
 import { IChat } from "../../model/chat";
 import { IUser } from "../../model/user";
@@ -15,13 +15,19 @@ type Props = {
 
 const getChatInfo = (chat: IChat, user: IUser) => {
   /*
-    This function gets a chat and a user and returns a name and image for the chat
+    This function gets a chat and a user and returns a name, the chat last message and image for the chat
     It check if the chat is a private / group chat. 
     It also checks If it's a private chat,it also checks if it belong to the current user 
    */
   if (!user) {
     return { name: chat.name, image: "" };
   }
+
+  let lastmessage = "";
+  if (chat.messages && chat.messages.length > 0) {
+    lastmessage = chat.messages[chat.messages.length - 1].text;
+  }
+
   if (chat.chatType === "private") {
     if (chat.createdBy === user.userId && chat.members.length === 1) {
       const currentUser = chat.users.filter(
@@ -31,6 +37,7 @@ const getChatInfo = (chat: IChat, user: IUser) => {
       return {
         name: chat?.name || "Me(You)",
         image: currentUser.avatar,
+        lastmessage,
       };
     } else {
       const chatPartner = chat.users.filter(
@@ -40,11 +47,13 @@ const getChatInfo = (chat: IChat, user: IUser) => {
       return {
         name: chatPartner.name,
         image: chatPartner.avatar,
+        lastmessage,
       };
     }
   } else {
     return {
-      name: chat?.name || "Group " + chat.id,
+      name: chat?.name || "Group " + chat.id, // Add a default group image
+      lastmessage,
     };
   }
 };
@@ -57,9 +66,9 @@ const ChatItem = (props: Props) => {
   }
 
   return (
-    <Link
+    <NavLink
       to={"/chats/" + chat.id}
-      className='flex justify-start items-center gap-4 my-2 sm:p-2 rounded-md hover:bg-white/5'
+      className={`chat-item flex justify-start items-center gap-4 my-2 sm:p-2 rounded-md hover:bg-white/5`}
       onClick={() => setIsChatsOpen(!isChatsOpen)}
     >
       <img
@@ -74,9 +83,11 @@ const ChatItem = (props: Props) => {
         <h3 className='whitespace-nowrap text-sm font-bold w-4/5 overflow-hidden text-ellipsis'>
           {getChatInfo(chat, user).name}
         </h3>
-        <small className='font-thin text-slate-300'>last message</small>
+        <small className='font-thin text-slate-300'>
+          {getChatInfo(chat, user).lastmessage}
+        </small>
       </main>
-    </Link>
+    </NavLink>
   );
 };
 
