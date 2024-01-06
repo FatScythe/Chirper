@@ -1,5 +1,7 @@
 import { Navigate } from "react-router-dom";
+// Context
 import { useAuth } from "../../context/AuthContext";
+// Types
 import { IMessage } from "../../model/message";
 
 type Props = {
@@ -7,10 +9,12 @@ type Props = {
 };
 const MessageBubble = ({ message }: Props) => {
   const { user } = useAuth();
+
   if (!user) {
     return <Navigate to='/' />;
   }
-  if (user?.userId !== message.sender) {
+
+  if (user.userId !== message.sender) {
     return (
       <div className='my-2 flex justify-start items-center'>
         <p className='bg-gray-700 mx-3 p-2 rounded-md'>{message.text}</p>
