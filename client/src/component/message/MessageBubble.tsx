@@ -14,7 +14,9 @@ const MessageBubble = ({ message }: Props) => {
     return <Navigate to='/' />;
   }
 
-  if (user.userId !== message.sender) {
+  const isCurrentUser = user.userId === message.sender;
+
+  if (!isCurrentUser) {
     return (
       <div className='my-2 flex justify-start items-center'>
         <p className='bg-gray-700 mx-3 p-2 rounded-md'>{message.text}</p>
