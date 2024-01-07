@@ -8,7 +8,7 @@ import Chat from "./pages/Chat";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import NotFound from "./pages/Notfound";
-import SingleChat from "./component/chat/Chat";
+import ChatLayout from "./component/chat/ChatLayout";
 
 function App() {
   const { isLoading, user } = useAuth();
@@ -28,7 +28,7 @@ function App() {
               </div>
             }
           />
-          <Route path='/chats/:id' element={<SingleChat />} />
+          <Route path='/chats/:id' element={<ChatLayout />} />
         </Route>
         <Route
           path='/register'
