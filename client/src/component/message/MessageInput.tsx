@@ -29,7 +29,7 @@ const MessageInput = ({ chatId }: Props) => {
   };
 
   return (
-    <div className='flex justify-between items-center w-full'>
+    <div className='ml-1 sm:ml-4 flex justify-between items-center gap-1 sm:gap-2'>
       <textarea
         rows={1}
         className='basis-11/12 p-2 rounded-3xl bg-transparent outline-none border border-primary resize-none no-scrollbar'
@@ -40,7 +40,7 @@ const MessageInput = ({ chatId }: Props) => {
         }}
       />
       <button
-        className='basis-1/12 mx-auto disabled:opacity-30'
+        className='basis-1/12 disabled:opacity-30'
         onClick={() => sendMessage()}
         disabled={!text}
       >
