@@ -136,6 +136,7 @@ const getSingleChat = async (req, res) => {
       id: chatId,
     },
     include: [User, Message],
+    order: [[{ model: Message }, "createdAt", "ASC"]],
   });
 
   const isChatMember = await chat.hasUser(userId);
@@ -144,7 +145,7 @@ const getSingleChat = async (req, res) => {
     throw new UnauthorizedError("Only chat members can view chat");
   }
 
-  res.status(200).json({ chat });
+  res.status(200).json(chat);
 };
 
 const deleteChat = async (req, res) => {
