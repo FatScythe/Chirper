@@ -32,7 +32,7 @@ const MessageInput = ({ chatId }: Props) => {
     <div className='flex justify-between items-center w-full'>
       <textarea
         rows={1}
-        className='basis-11/12 p-2 rounded-3xl bg-transparent outline-none border border-primary resize-none'
+        className='basis-11/12 p-2 rounded-3xl bg-transparent outline-none border border-primary resize-none no-scrollbar'
         placeholder='Message...'
         value={text}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
