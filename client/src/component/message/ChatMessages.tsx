@@ -1,3 +1,4 @@
+import { useState } from "react";
 // Types
 import { IChat } from "../../model/chat";
 // Components
@@ -12,10 +13,35 @@ const ChatMessages = ({ chat }: Props) => {
     return <></>;
   }
 
+  const [showOption, setShowOption] = useState(false);
+
   return (
-    <div className='h-full w-full'>
+    <div className='h-full w-full relative'>
+      {showOption && (
+        <div
+          className='fixed z-20 bg-dark/40 top-0 left-0 right-0 bottom-0'
+          onClick={() => setShowOption(false)}
+        >
+          <div className='absolute bg-black w-3/4 sm:w-1/3 rounded-md h-fit top-1/2 left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden'>
+            <div className='flex flex-col justify-center items-center'>
+              <button className='bg-primary w-full py-2 hover:bg-primary/35 hover:font-semibold transition-all duration-200'>
+                Edit Message
+              </button>
+              <button className='bg-danger w-full py-2 hover:bg-danger/35 hover:font-semibold transition-all duration-200'>
+                Delete Message
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {chat.messages.map((message) => {
-        return <MessageBubble key={message.id} message={message} />;
+        return (
+          <MessageBubble
+            key={message.id}
+            message={message}
+            setShowOption={setShowOption}
+          />
+        );
       })}
     </div>
   );
