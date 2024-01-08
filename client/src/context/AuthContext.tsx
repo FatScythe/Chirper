@@ -115,7 +115,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(null);
       navigate("/login");
-      alert("Logout Sucessfully");
+      alert("You are logged out");
     } catch (err) {
       console.error(err);
     }
