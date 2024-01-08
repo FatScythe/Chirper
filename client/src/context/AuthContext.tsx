@@ -47,65 +47,78 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     email: string;
     password: string;
   }) => {
-    const { name, email, password } = formData;
-    setIsLoading(true);
+    try {
+      const { name, email, password } = formData;
+      setIsLoading(true);
 
-    if (!name || !email || !password) {
+      if (!name || !email || !password) {
+        setIsLoading(false);
+        alert("Please fill all fields");
+        return;
+      }
+
+      const response = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setIsLoading(false);
+        alert(data ? data.msg : "Something went wrong");
+        return;
+      }
+
       setIsLoading(false);
-      alert("Please fill all fields");
-      return;
+
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
     }
-
-    const response = await fetch("/api/v1/auth/register", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      setIsLoading(false);
-      alert(data ? data.msg : "Something went wrong");
-      return;
-    }
-
-    setIsLoading(false);
-
-    navigate("/login");
   };
 
   const login = async (formData: { email: string; password: string }) => {
-    setIsLoading(true);
-    const response = await fetch("/api/v1/auth/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
 
-    if (!response.ok) {
+      if (!response.ok) {
+        setIsLoading(false);
+        alert(data ? data.msg : "Something went wrong");
+        return;
+      }
+
+      setUser(data);
       setIsLoading(false);
-      alert(data ? data.msg : "Something went wrong");
-      return;
+      navigate("/chats");
+    } catch (error) {
+      console.error(error);
     }
-
-    setUser(data);
-    setIsLoading(false);
-    navigate("/chats");
   };
 
   const logout = async () => {
-    const response = await fetch("/api/v1/auth/logout");
-    const data = await response.json();
+    try {
+      const response = await fetch("/api/v1/auth/logout");
+      const data = await response.json();
 
-    if (!response.ok) {
-      setIsLoading(false);
-      alert(data ? data.msg : "Something went wrong");
-      return;
+      if (!response.ok) {
+        setIsLoading(false);
+        alert(data ? data.msg : "Something went wrong");
+        return;
+      }
+
+      setUser(null);
+      navigate("/login");
+      alert("Logout Sucessfully");
+    } catch (err) {
+      console.error(err);
     }
-
-    setUser(null);
-    navigate("/login");
   };
 
   return (
