@@ -8,6 +8,7 @@ import useTitle from "../../hooks/useTitle";
 import { useChatOpen } from "../../pages/Chat";
 // Types
 import { IChat } from "../../model/chat";
+// Component
 import ChatHeader from "./ChatHeader";
 
 const SingleChat = () => {
@@ -44,9 +45,15 @@ const SingleChat = () => {
       console.error(err);
     }
   };
+  const [isEditing, setIsEditing] = useState({
+    editing: false,
+    message: { id: 0, text: "", sender: 0 },
+  });
+  const [text, setText] = useState("");
 
   useEffect(() => {
     getSingleChat(chatId);
+    setText("");
   }, [chatId]);
 
   if (loading) {
@@ -67,10 +74,21 @@ const SingleChat = () => {
         <ChatHeader chat={chat} setIsChatsOpen={setIsChatsOpen} />
       </div>
       <div className='basis-5/6'>
-        <ChatMessages chat={chat} />
+        <ChatMessages
+          chat={chat}
+          setText={setText}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+        />
       </div>
       <div className='mx-auto w-full basis-1/12'>
-        <MessageInput chatId={chatId} />
+        <MessageInput
+          chatId={chatId}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          text={text}
+          setText={setText}
+        />
       </div>
     </section>
   );
