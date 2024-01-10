@@ -44,7 +44,7 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
     <div className='h-full w-full relative'>
       {showOption && (
         <div
-          className='fixed z-20 bg-dark/40 top-0 left-0 right-0 bottom-0'
+          className='absolute z-20 bg-transparent -top-1/4 left-0 right-0 -bottom-1/4'
           onClick={() => setShowOption(false)}
         >
           <div className='absolute bg-black w-3/4 sm:w-1/3 rounded-md h-fit top-1/2 left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden'>
