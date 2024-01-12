@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronLeftIcon, OptionIcon } from "../icon";
 // Context
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
 // Type
 import { IChat } from "../../model/chat";
 // Utils
@@ -66,6 +67,7 @@ type optionType = {
 
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
+  const { deleteChat } = useChat();
 
   return (
     <div className=''>
@@ -75,7 +77,10 @@ const Option = ({ chat, setShowOption }: optionType) => {
       ></div>
       <div className='absolute z-20 top-6 -left-28 bg-white h-fit w-28 text-black'>
         <ul className='text-center flex flex-col justify-stretch gap-2 items-center'>
-          <li className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'>
+          <li
+            className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
+            onClick={() => deleteChat(chat.id)}
+          >
             {chat.createdBy === user?.userId ? "Delete Chat" : "Leave Chat"}
           </li>
           {chat.chatType === "group" && (
@@ -83,9 +88,11 @@ const Option = ({ chat, setShowOption }: optionType) => {
               <li className='w-full py-1 hover:bg-dark hover:text-white cursor-pointer duration-200'>
                 Add to group
               </li>
-              <li className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'>
-                Leave group
-              </li>
+              {chat.createdBy !== user?.userId && (
+                <li className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'>
+                  Leave group
+                </li>
+              )}
             </>
           )}
         </ul>
