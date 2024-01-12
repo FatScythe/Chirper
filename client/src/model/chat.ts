@@ -1,7 +1,7 @@
 import { IMessage } from "./message";
 import { IUser } from "./user";
 
-type chatType = "private" | "group";
+export type chatType = "private" | "group";
 
 export interface IChat {
   id: number;
