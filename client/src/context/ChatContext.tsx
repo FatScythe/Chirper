@@ -43,7 +43,9 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deleteChat = async (chatId: number) => {
     try {
-      const response = await fetch("/api/v1/chat/" + chatId);
+      const response = await fetch("/api/v1/chat/" + chatId, {
+        method: "DELETE",
+      });
       const data = await response.json();
 
       if (!response.ok) {
