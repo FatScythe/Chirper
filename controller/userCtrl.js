@@ -1,4 +1,4 @@
-const { User } = require("../model/index");
+const { User, sequelize } = require("../model/index");
 const { Op } = require("sequelize");
 
 const showMe = async (req, res) => {
@@ -6,13 +6,15 @@ const showMe = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  const { username } = req.body;
+  const { id: username } = req.params;
   const users = await User.findAll({
+    attributes: { exclude: ["password"] },
     where: {
       name: {
-        [Op.like]: username,
+        [Op.iLike]: username + "%",
       },
     },
+    limit: 5,
   });
 
   res.status(200).json(users);
