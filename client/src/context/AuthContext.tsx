@@ -25,17 +25,22 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
 
   const fetchUser = async () => {
-    setIsLoading(true);
-    const response = await fetch("/api/v1/user/showMe");
-    const data = await response.json();
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/v1/user/showMe");
+      const data = await response.json();
 
-    if (!response.ok) {
+      if (!response.ok) {
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(false);
-      return;
+      setUser(data);
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
     }
-
-    setIsLoading(false);
-    setUser(data);
   };
 
   useEffect(() => {
@@ -74,6 +79,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       navigate("/login");
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -98,6 +104,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(false);
       navigate("/chats");
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
