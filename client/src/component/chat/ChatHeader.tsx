@@ -9,6 +9,7 @@ import { IChat } from "../../model/chat";
 // Utils
 import { getChatInfo } from "../../utils/getChatInfo";
 import url from "../../utils/url";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   chat: IChat | null;
@@ -28,12 +29,19 @@ const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
   }
 
   const { name, members, image } = getChatInfo(chat, user);
+  const navigate = useNavigate();
 
   return (
     <div className='flex justify-between items-center w-full'>
       <div className='flex justify-start items-center gap-2'>
         <div className='flex justify-start items-center gap-2'>
-          <button className='sm:hidden' onClick={() => setIsChatsOpen(true)}>
+          <button
+            className='sm:hidden'
+            onClick={() => {
+              setIsChatsOpen(true);
+              navigate("/chats");
+            }}
+          >
             <ChevronLeftIcon className='w-6 h-6' />
           </button>
           <img
