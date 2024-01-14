@@ -12,12 +12,14 @@ type Props = {
 };
 
 const AllChats = (props: Props) => {
-  const { loading, myChats, getChats } = useChat();
+  const { loading, myChats, getChats, setCurrentChat } = useChat();
 
   useTitle("All chats");
   useEffect(() => {
     getChats();
+    setCurrentChat(null);
   }, []);
+
   if (loading) {
     return <div>Loading...</div>;
   }
