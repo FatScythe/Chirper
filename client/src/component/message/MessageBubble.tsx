@@ -29,7 +29,7 @@ const MessageBubble = ({
   const isUserMessage = user.userId === message.sender;
   const time =
     new Date(message?.updatedAt || 0).getHours().toString() +
-    ": " +
+    ":" +
     new Date(message?.updatedAt || 0).getMinutes().toString();
   const isMessageEditted =
     new Date(message?.createdAt || 0).getTime() <
@@ -44,10 +44,12 @@ const MessageBubble = ({
       <div
         className={`flex flex-col justify-between items-start ${
           isUserMessage ? "bg-primary mr-3 order-2" : "bg-gray-700 ml-3 order-1"
-        } p-1 rounded-md`}
+        } p-0.5 rounded-md gap-1`}
       >
-        <p>{message.text}</p>
-        <small className='text-[0.5rem] self-end text-gray-200'>
+        <p className={`self-start ${isUserMessage ? "mr-2" : "ml-2"}`}>
+          {message.text}
+        </p>
+        <small className='self-end text-[0.5rem] text-gray-200'>
           {isMessageEditted ? "Editted at: " + time : time}
         </small>
       </div>
