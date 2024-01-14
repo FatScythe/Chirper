@@ -11,7 +11,7 @@ import { getChatInfo } from "../../utils/getChatInfo";
 import url from "../../utils/url";
 
 type Props = {
-  chat: IChat;
+  chat: IChat | null;
   setIsChatsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -20,6 +20,10 @@ const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
   const [showOption, setShowOption] = useState(false);
 
   if (!user) {
+    return <></>;
+  }
+
+  if (!chat) {
     return <></>;
   }
 

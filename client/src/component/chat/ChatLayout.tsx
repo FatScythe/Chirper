@@ -6,10 +6,10 @@ import ChatMessages from "../message/ChatMessages";
 // Hook
 import useTitle from "../../hooks/useTitle";
 import { useChatOpen } from "../../pages/Chat";
-// Types
-import { IChat } from "../../model/chat";
 // Component
 import ChatHeader from "./ChatHeader";
+// Context
+import { useChat } from "../../context/ChatContext";
 
 const SingleChat = () => {
   const { id: chatId } = useParams();
@@ -21,9 +21,9 @@ const SingleChat = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [chat, setChat] = useState<IChat | null>(null);
 
-  const { setIsChatsOpen } = useChatOpen();
+  const { setIsChatsOpen } = useChatOpen(); // Checks if all chats is open specifically for mobile device
+  const { currentChat, setCurrentChat } = useChat(); // Sets the current chat in the chat context
 
   const getSingleChat = async (chatId: string) => {
     try {
@@ -38,7 +38,7 @@ const SingleChat = () => {
       }
 
       setLoading(false);
-      setChat(data);
+      setCurrentChat(data);
     } catch (err) {
       setLoading(false);
       setError(true);
@@ -48,8 +48,8 @@ const SingleChat = () => {
   const [isEditing, setIsEditing] = useState({
     editing: false,
     message: { id: 0, text: "", sender: 0 },
-  });
-  const [text, setText] = useState("");
+  }); // To track message editing
+  const [text, setText] = useState(""); // To track input for messages
 
   useEffect(() => {
     getSingleChat(chatId);
@@ -64,18 +64,18 @@ const SingleChat = () => {
     return <div>Error...</div>;
   }
 
-  if (!chat) {
+  if (!currentChat) {
     return <div>Error...</div>;
   }
 
   return (
     <section className='flex flex-col justify-between h-screen gap-2 py-1'>
       <div className='basis-1/12 p-2 flex justify-start items-center gap-4'>
-        <ChatHeader chat={chat} setIsChatsOpen={setIsChatsOpen} />
+        <ChatHeader chat={currentChat} setIsChatsOpen={setIsChatsOpen} />
       </div>
       <div className='basis-5/6'>
         <ChatMessages
-          chat={chat}
+          chat={currentChat}
           setText={setText}
           isEditing={isEditing}
           setIsEditing={setIsEditing}

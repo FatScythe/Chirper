@@ -7,17 +7,17 @@ const ChatContext = createContext<ChatContextType>({
   myChats: null,
   getChats: async () => {},
   deleteChat: async () => {},
-  changeCurrentChat: () => {},
+  setCurrentChat: () => null,
 });
 
 const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [loading, setLoading] = useState<Boolean>(false);
-  const [currentChat, setCurrentChat] = useState<IChat | null>(null);
+  const [currentChat, setCurrentChat] = useState<IChat | null>(null); // Tracks the current chat user selected
   const [myChats, setMyChats] = useState<{ nb: number; chats: IChat[] } | null>(
     null
-  );
+  ); // Tracks all users chats
 
   const getChats = async () => {
     try {
@@ -59,8 +59,6 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const changeCurrentChat = (chat: IChat) => setCurrentChat(chat);
-
   return (
     <ChatContext.Provider
       value={{
@@ -68,7 +66,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         myChats,
         getChats,
         deleteChat,
-        changeCurrentChat,
+        setCurrentChat,
         loading,
       }}
     >

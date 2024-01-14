@@ -6,7 +6,7 @@ import { IMessage } from "../../model/message";
 import MessageBubble from "./MessageBubble";
 
 type Props = {
-  chat: IChat;
+  chat: IChat | null;
   isEditing: { editing: boolean; message: IMessage };
   setIsEditing: React.Dispatch<
     React.SetStateAction<{ editing: boolean; message: IMessage }>
@@ -15,6 +15,10 @@ type Props = {
 };
 
 const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
+  if (!chat) {
+    return <></>;
+  }
+
   if (chat.messages === undefined || !chat.messages) {
     return <></>;
   }
