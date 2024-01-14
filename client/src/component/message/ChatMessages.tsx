@@ -4,6 +4,8 @@ import { IChat } from "../../model/chat";
 import { IMessage } from "../../model/message";
 // Components
 import MessageBubble from "./MessageBubble";
+// Context
+import { useMessage } from "../../context/MessageContext";
 
 type Props = {
   chat: IChat | null;
@@ -22,36 +24,22 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
   if (chat.messages === undefined || !chat.messages) {
     return <></>;
   }
-  const [showOption, setShowOption] = useState(false);
+  const [showOption, setShowOption] = useState(false); // To show delete and edit message modal
+  const { deleteMessage } = useMessage();
 
   const handleDeleteMessage = async () => {
     setIsEditing({ ...isEditing, editing: false });
-    try {
-      const response = await fetch("/api/v1/message/" + isEditing.message.id, {
-        method: "DELETE",
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data?.msg || "Couldn't send message");
-        return;
-      }
-
-      alert(data.msg);
-    } catch (error) {
-      console.error(error);
-      alert("Message was not sent");
-    }
+    deleteMessage(isEditing.message.id).catch((err) => alert(err.message));
   };
 
   return (
-    <div className='h-full w-full relative'>
+    <div className='h-fit  relative'>
       {showOption && (
         <div
           className='absolute z-20 bg-transparent -top-1/4 left-0 right-0 -bottom-1/4'
           onClick={() => setShowOption(false)}
         >
-          <div className='absolute bg-black w-3/4 sm:w-1/3 rounded-md h-fit top-1/2 left-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden'>
+          <div className='fixed bg-black w-3/4 sm:w-1/3 rounded-md h-fit top-1/2 left-1/2 sm:left-2/3 right-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden'>
             <div className='flex flex-col justify-center items-center'>
               <button
                 className='bg-primary w-full py-2 hover:bg-primary/35 hover:font-semibold transition-all duration-200'
