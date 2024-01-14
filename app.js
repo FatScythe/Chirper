@@ -5,8 +5,7 @@ const { sequelize } = require("./model");
 const { createServer } = require("node:http");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-// const cors = require("cors");
-const { Server, socket } = require("socket.io");
+const { Server } = require("socket.io");
 // Middlewares
 const errorMiddleware = require("./middleware/error-handler");
 const notFoundMiddleware = require("./middleware/not-found");
@@ -20,7 +19,6 @@ const io = new Server(server, {
   },
 });
 
-// app.use(cors());
 app.use(express.static(path.resolve(__dirname, "./public")));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
