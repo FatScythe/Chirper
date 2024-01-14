@@ -5,6 +5,8 @@ import { EditIcon, SendIcon } from "../icon";
 import { IMessage } from "../../model/message";
 // Context
 import { useMessage } from "../../context/MessageContext";
+import { useChat } from "../../context/ChatContext";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   chatId: string;
@@ -24,12 +26,17 @@ const MessageInput = ({
   setIsEditing,
 }: Props) => {
   const { sendMessage, editMessage } = useMessage();
+  const { getChats } = useChat();
+
+  const navigate = useNavigate();
 
   const handleSendMessage = () => {
     sendMessage(chatId, text)
       .then(() => {
         setText("");
+        getChats();
       })
+      .then(() => navigate("/chats/" + chatId))
       .catch((err) => {
         alert(err?.message || "Couldn't send message");
       });
@@ -50,7 +57,9 @@ const MessageInput = ({
       .then(() => {
         setIsEditing({ ...isEditing, editing: false });
         setText("");
+        getChats();
       })
+      .then(() => navigate("/chats/" + chatId))
       .catch((err) => {
         setIsEditing({ ...isEditing, editing: false });
         setText("");
