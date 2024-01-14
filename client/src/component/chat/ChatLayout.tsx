@@ -45,6 +45,7 @@ const SingleChat = () => {
       console.error(err);
     }
   };
+
   const [isEditing, setIsEditing] = useState({
     editing: false,
     message: { id: 0, text: "", sender: 0 },
@@ -65,6 +66,7 @@ const SingleChat = () => {
   }
 
   if (!currentChat) {
+    getSingleChat(chatId);
     return <div>Error...</div>;
   }
 
