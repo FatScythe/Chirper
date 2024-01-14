@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 // Icons
 import { ChevronLeftIcon, OptionIcon } from "../icon";
 // Context
@@ -9,7 +10,6 @@ import { IChat } from "../../model/chat";
 // Utils
 import { getChatInfo } from "../../utils/getChatInfo";
 import url from "../../utils/url";
-import { useNavigate } from "react-router-dom";
 
 type Props = {
   chat: IChat | null;
@@ -80,33 +80,51 @@ type optionType = {
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
   const { deleteChat } = useChat();
+  const navigate = useNavigate();
 
   return (
-    <div className=''>
+    <div>
       <div
         className='fixed z-20 bg-transparent top-0 right-0 left-0 bottom-0'
         onClick={() => setShowOption(false)}
       ></div>
       <div className='absolute z-20 top-6 -left-28 bg-white h-fit w-28 text-black'>
         <ul className='text-center flex flex-col justify-stretch gap-2 items-center'>
-          <li
-            className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
-            onClick={() => deleteChat(chat.id)}
-          >
-            {chat.createdBy === user?.userId ? "Delete Chat" : "Leave Chat"}
-          </li>
-          {chat.chatType === "group" && (
+          {chat.chatType === "private" ? (
+            <>
+              <li
+                className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
+                onClick={() => deleteChat(chat.id)}
+              >
+                {chat.createdBy === user?.userId ? "Delete Chat" : "Leave Chat"}
+              </li>
+            </>
+          ) : (
             <>
               <li className='w-full py-1 hover:bg-dark hover:text-white cursor-pointer duration-200'>
                 Add to group
               </li>
-              {chat.createdBy !== user?.userId && (
+              {chat.createdBy === user?.userId ? (
+                <li
+                  onClick={() => deleteChat(chat.id)}
+                  className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
+                >
+                  Delete Group
+                </li>
+              ) : (
                 <li className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'>
-                  Leave group
+                  Leave Group
                 </li>
               )}
             </>
           )}
+
+          <li
+            className='hidden sm:block w-full py-1 hover:bg-primary hover:text-white cursor-pointer duration-200'
+            onClick={() => navigate("/chats")}
+          >
+            Close Chat
+          </li>
         </ul>
       </div>
     </div>
