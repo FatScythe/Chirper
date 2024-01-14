@@ -32,6 +32,11 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       }
       setLoading(false);
       setMyChats(data);
+
+      if (currentChat && data.nb > 0) {
+        const chats: IChat[] = data.chats;
+        setCurrentChat(chats.filter((chat) => chat.id === currentChat.id)[0]);
+      }
     } catch (err) {
       console.error(err);
     }
