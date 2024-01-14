@@ -21,5 +21,5 @@ export type ChatContextType = {
   myChats: { nb: number; chats: IChat[] } | null;
   getChats: () => Promise<void>;
   deleteChat: (chatId: number) => Promise<void>;
-  changeCurrentChat: (chat: IChat) => void;
+  setCurrentChat: React.Dispatch<React.SetStateAction<IChat | null>>;
 };
