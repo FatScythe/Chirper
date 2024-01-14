@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // Types
 import { IChat } from "../../model/chat";
 import { IMessage } from "../../model/message";
@@ -6,6 +6,8 @@ import { IMessage } from "../../model/message";
 import MessageBubble from "./MessageBubble";
 // Context
 import { useMessage } from "../../context/MessageContext";
+import { useChat } from "../../context/ChatContext";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   chat: IChat | null;
@@ -24,13 +26,27 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
   if (chat.messages === undefined || !chat.messages) {
     return <></>;
   }
+
   const [showOption, setShowOption] = useState(false); // To show delete and edit message modal
   const { deleteMessage } = useMessage();
+  const { getChats } = useChat();
+  const navigate = useNavigate();
 
   const handleDeleteMessage = async () => {
     setIsEditing({ ...isEditing, editing: false });
-    deleteMessage(isEditing.message.id).catch((err) => alert(err.message));
+    deleteMessage(isEditing.message.id)
+      .then(() => {
+        getChats();
+        navigate("/chats/" + chat.id);
+      })
+      .catch((err) => alert(err.message));
   };
+
+  // Scroll message to the bottom when chat is updated
+  const refMessageEnd = useRef<null | HTMLDivElement>(null);
+  useEffect(() => {
+    refMessageEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [chat]);
 
   return (
     <div className='h-fit  relative'>
@@ -71,6 +87,7 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
           />
         );
       })}
+      <div ref={refMessageEnd}></div>
     </div>
   );
 };
