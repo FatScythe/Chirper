@@ -1,6 +1,10 @@
+import { useState } from "react";
 // Icon
 import { EditIcon, SendIcon } from "../icon";
+// Types
 import { IMessage } from "../../model/message";
+// Context
+import { useMessage } from "../../context/MessageContext";
 
 type Props = {
   chatId: string;
@@ -19,62 +23,43 @@ const MessageInput = ({
   isEditing,
   setIsEditing,
 }: Props) => {
-  const sendMessage = async () => {
-    try {
-      const response = await fetch("/api/v1/message", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ chatId, text }),
-      });
-      const data = await response.json();
+  const { sendMessage, editMessage } = useMessage();
 
-      if (!response.ok) {
-        alert(data?.msg || "Couldn't send message");
-        return;
-      }
-      setText("");
-    } catch (error) {
-      console.error(error);
-      alert("Message was not sent");
-    }
-  };
-
-  const handleEditMessage = async () => {
-    try {
-      if (!text) {
-        alert("Please provide text!");
-        return;
-      }
-
-      if (text === isEditing.message.text) {
-        alert("Please provide a new text");
-        return;
-      }
-
-      const response = await fetch("/api/v1/message/" + isEditing.message.id, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
+  const handleSendMessage = () => {
+    sendMessage(chatId, text)
+      .then(() => {
         setText("");
-        setIsEditing({ ...isEditing, editing: false });
-        alert(data?.msg || "Couldn't send message");
-        return;
-      }
-
-      alert(data.msg);
-      setIsEditing({ ...isEditing, editing: false });
-      setText("");
-    } catch (error) {
-      setText("");
-      setIsEditing({ ...isEditing, editing: false });
-      console.error(error);
-      alert("Message was not sent");
-    }
+      })
+      .catch((err) => {
+        alert(err?.message || "Couldn't send message");
+      });
   };
+
+  const handleEditMessage = () => {
+    if (!text) {
+      alert("Please provide text!");
+      return;
+    }
+
+    if (text === isEditing.message.text) {
+      alert("Please provide a new text");
+      return;
+    }
+
+    editMessage(isEditing.message.id, text)
+      .then(() => {
+        setIsEditing({ ...isEditing, editing: false });
+        setText("");
+      })
+      .catch((err) => {
+        setIsEditing({ ...isEditing, editing: false });
+        setText("");
+        alert(err?.message || "Couldn't edit message");
+      });
+  };
+
+  const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
+  const [selfTyping, setSelfTyping] = useState(false); // To track if the current user is typing
 
   return (
     <div className='ml-1 sm:ml-4 flex justify-between items-center gap-1 sm:gap-2'>
@@ -86,11 +71,17 @@ const MessageInput = ({
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           setText(e.target.value);
         }}
+        onBlur={() => {
+          setIsTyping(false);
+        }}
+        onFocus={() => {
+          setIsTyping(true);
+        }}
       />
       <button
         className='basis-1/12 disabled:opacity-30'
         onClick={() =>
-          isEditing.editing ? handleEditMessage() : sendMessage()
+          isEditing.editing ? handleEditMessage() : handleSendMessage()
         }
         disabled={!text}
       >
