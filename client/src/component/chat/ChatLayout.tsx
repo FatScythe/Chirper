@@ -10,6 +10,7 @@ import { useChatOpen } from "../../pages/Chat";
 import ChatHeader from "./ChatHeader";
 // Context
 import { useChat } from "../../context/ChatContext";
+import { useSocket } from "../../context/SocketContext";
 
 const SingleChat = () => {
   const { id: chatId } = useParams();
@@ -24,6 +25,7 @@ const SingleChat = () => {
 
   const { setIsChatsOpen } = useChatOpen(); // Checks if all chats is open specifically for mobile device
   const { currentChat, setCurrentChat } = useChat(); // Sets the current chat in the chat context
+  const { socket } = useSocket();
 
   const getSingleChat = async (chatId: string) => {
     try {
@@ -69,6 +71,8 @@ const SingleChat = () => {
     getSingleChat(chatId);
     return <div>Error...</div>;
   }
+
+  socket?.emit("chat", currentChat.id);
 
   return (
     <section className='flex flex-col justify-between h-screen gap-2 py-1'>
