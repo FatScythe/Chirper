@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 // Icon
 import { EditIcon, SendIcon } from "../icon";
 // Types
@@ -6,7 +7,8 @@ import { IMessage } from "../../model/message";
 // Context
 import { useMessage } from "../../context/MessageContext";
 import { useChat } from "../../context/ChatContext";
-import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../context/SocketContext";
+import { useAuth } from "../../context/AuthContext";
 
 type Props = {
   chatId: string;
@@ -26,7 +28,7 @@ const MessageInput = ({
   setIsEditing,
 }: Props) => {
   const { sendMessage, editMessage } = useMessage();
-  const { getChats } = useChat();
+  const { getChats, currentChat } = useChat();
 
   const navigate = useNavigate();
 
@@ -67,8 +69,15 @@ const MessageInput = ({
       });
   };
 
-  const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
+  const { socket } = useSocket();
+  const { user } = useAuth();
+  const { setMemberTyping } = useMessage();
+
   const [selfTyping, setSelfTyping] = useState(false); // To track if the current user is typing
+
+  socket?.on("isMemberTyping", (message) => {
+    setMemberTyping(message);
+  });
 
   return (
     <div className='ml-1 sm:ml-4 flex justify-between items-center gap-1 sm:gap-2'>
@@ -79,12 +88,11 @@ const MessageInput = ({
         value={text}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
           setText(e.target.value);
+          setSelfTyping(true);
+          socket?.emit("isTyping", user, currentChat);
         }}
         onBlur={() => {
-          setIsTyping(false);
-        }}
-        onFocus={() => {
-          setIsTyping(true);
+          setSelfTyping(!selfTyping);
         }}
       />
       <button
