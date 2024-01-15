@@ -5,6 +5,7 @@ import { ChevronLeftIcon, OptionIcon } from "../icon";
 // Context
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
+import { useMessage } from "../../context/MessageContext";
 // Type
 import { IChat } from "../../model/chat";
 // Utils
@@ -18,6 +19,7 @@ type Props = {
 
 const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
   const { user } = useAuth();
+  const { memberTyping } = useMessage();
   const [showOption, setShowOption] = useState(false);
 
   if (!user) {
@@ -53,12 +55,16 @@ const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
 
         <div>
           <h2 className='font-semibold'>{name}</h2>
-          <small>
-            {chat.chatType === "group"
-              ? members.map((member) => member.name + "") + "..."
-              : "last seen " +
-                new Date(chat.updatedAt ? chat.updatedAt : "").toDateString()}
-          </small>
+          {memberTyping ? (
+            <small className='text-success font-semibold'>{memberTyping}</small>
+          ) : (
+            <small>
+              {chat?.chatType === "group"
+                ? members.map((member) => member.name + "") + "..."
+                : "last seen " +
+                  new Date(chat.updatedAt ? chat.updatedAt : "").toDateString()}
+            </small>
+          )}
         </div>
       </div>
 
