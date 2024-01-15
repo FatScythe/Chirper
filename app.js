@@ -39,9 +39,29 @@ app.use(notFoundMiddleware);
 const PORT = process.env.PORT || 5000;
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  console.log("A user with id: " + socket.id + " connected");
   socket.on("disconnect", () => {
     console.log("user disconnected");
+  });
+
+  // socket.on("connect-user", (user) => {
+  //   socket.join(user.id);
+  // })
+
+  socket.on("chat", (chatId) => {
+    socket.join(chatId);
+  });
+
+  socket.on("isTyping", (user, chat) => {
+    let message;
+
+    if (chat.chatType == "private") {
+      message = "typing...";
+    } else {
+      message = user.name + " is typing...";
+    }
+
+    socket.to(chat.id).emit("isMemberTyping", message);
   });
 });
 
