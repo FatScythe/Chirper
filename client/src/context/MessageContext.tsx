@@ -1,13 +1,17 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const MessageContext = createContext<{
   sendMessage: (chatId: string, text: string) => Promise<void>;
   editMessage: (messageId: number, text: string) => Promise<void>;
   deleteMessage: (messageId: number) => Promise<void>;
+  memberTyping: string;
+  setMemberTyping: React.Dispatch<React.SetStateAction<string>>;
 }>({
   sendMessage: async () => {},
   editMessage: async () => {},
   deleteMessage: async () => {},
+  memberTyping: "",
+  setMemberTyping: () => null,
 });
 
 const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -54,9 +58,23 @@ const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     alert(data.msg);
   };
 
+  const [memberTyping, setMemberTyping] = useState("");
+
+  useEffect(() => {
+    setTimeout(() => {
+      setMemberTyping("");
+    }, 2000);
+  }, [memberTyping]);
+
   return (
     <MessageContext.Provider
-      value={{ sendMessage, editMessage, deleteMessage }}
+      value={{
+        sendMessage,
+        editMessage,
+        deleteMessage,
+        memberTyping,
+        setMemberTyping,
+      }}
     >
       {children}
     </MessageContext.Provider>
