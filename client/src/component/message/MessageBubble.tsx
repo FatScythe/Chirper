@@ -46,9 +46,7 @@ const MessageBubble = ({
           isUserMessage ? "bg-primary mr-3 order-2" : "bg-gray-700 ml-3 order-1"
         } p-0.5 rounded-md gap-1`}
       >
-        <p className={`self-start ${isUserMessage ? "mr-2" : "ml-2"}`}>
-          {message.text}
-        </p>
+        <p className='self-start mr-4'>{message.text}</p>
         <small className='self-end text-[0.5rem] text-gray-200'>
           {isMessageEditted ? "Editted at: " + time : time}
         </small>
