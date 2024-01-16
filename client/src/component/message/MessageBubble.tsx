@@ -44,7 +44,7 @@ const MessageBubble = ({
       <div
         className={`flex flex-col justify-between items-start ${
           isUserMessage ? "bg-primary mr-3 order-2" : "bg-gray-700 ml-3 order-1"
-        } p-0.5 rounded-md gap-1`}
+        } p-0.5 rounded-md gap-1 max-w-[60%]`}
       >
         <p className='self-start mr-4'>{message.text}</p>
         <small className='self-end text-[0.5rem] text-gray-200'>
