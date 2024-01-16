@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Outlet, useNavigate, useOutletContext } from "react-router-dom";
 // Context
 import { useAuth } from "../context/AuthContext";
+import { useSocket } from "../context/SocketContext";
 // Components
 import AllChats from "../component/chat/AllChats";
+import CreateChat from "../component/chat/CreateChat";
 // Icon
 import { LogoutIcon } from "../component/icon";
-import CreateChat from "../component/chat/CreateChat";
 
 type ContextType = {
   setIsChatsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +16,8 @@ type ContextType = {
 const Chat = () => {
   const [isChatsOpen, setIsChatsOpen] = useState(true);
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const { socket } = useSocket();
 
   return (
     <section className='grid grid-cols-12 h-screen relative sm:static bg-dark/90 text-white overflow-hidden'>
@@ -34,7 +36,11 @@ const Chat = () => {
 
           <button
             className='p-2 rounded-full hover:bg-danger'
-            onClick={() => logout()}
+            onClick={() => {
+              // Disconnect user from socket io
+              socket?.emit("disconnect-user", user);
+              logout();
+            }}
             title='logout'
           >
             <LogoutIcon className='w-6 h-6' />
