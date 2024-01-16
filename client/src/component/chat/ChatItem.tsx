@@ -5,6 +5,8 @@ import { IChat } from "../../model/chat";
 import groupAvatar from "../../assets/avatars.png";
 // Context
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
+import { useMessage } from "../../context/MessageContext";
 // Util
 import { getChatInfo } from "../../utils/getChatInfo";
 import url from "../../utils/url";
@@ -18,6 +20,9 @@ type Props = {
 const ChatItem = (props: Props) => {
   const { chat, isChatsOpen, setIsChatsOpen } = props;
   const { user } = useAuth();
+  const { currentChat } = useChat();
+  const { memberTyping } = useMessage();
+
   if (!user) {
     return <Navigate to='/' />;
   }
@@ -40,9 +45,13 @@ const ChatItem = (props: Props) => {
         <h3 className='whitespace-nowrap text-sm font-bold w-4/5 overflow-hidden text-ellipsis'>
           {getChatInfo(chat, user).name}
         </h3>
-        <small className='font-thin text-slate-300'>
-          {getChatInfo(chat, user).lastmessage}
-        </small>
+        {currentChat?.id === chat.id && memberTyping ? (
+          <small className='text-success font-semibold'>{memberTyping}</small>
+        ) : (
+          <small className='font-thin text-slate-300'>
+            {getChatInfo(chat, user).lastmessage}
+          </small>
+        )}
       </main>
     </NavLink>
   );
