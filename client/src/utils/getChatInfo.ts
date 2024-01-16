@@ -17,6 +17,9 @@ export const getChatInfo = (chat: IChat, user: IUser) => {
   let lastmessage = "";
   if (chat.messages && chat.messages.length > 0) {
     lastmessage = chat.messages[chat.messages.length - 1].text;
+    if (lastmessage.length > 20) {
+      lastmessage = lastmessage.substring(0, 20) + "...";
+    }
   }
 
   let members: IUser[] = chat.users;
