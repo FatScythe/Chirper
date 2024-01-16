@@ -1,6 +1,8 @@
 import "./App.css";
+import { useEffect } from "react";
 // Context
 import { useAuth } from "./context/AuthContext";
+import { useSocket } from "./context/SocketContext";
 // Router
 import { Routes, Route, Navigate } from "react-router-dom";
 // Pages
@@ -12,6 +14,13 @@ import ChatLayout from "./component/chat/ChatLayout";
 
 function App() {
   const { isLoading, user } = useAuth();
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    // Connect user to socket io
+    if (user) socket?.emit("connect-user", user);
+  }, [socket, user]);
+
   return (
     <>
       <Routes>
