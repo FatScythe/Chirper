@@ -61,7 +61,7 @@ const SingleChat = () => {
     }
     getSingleChat(chatId).then(() => {
       // Join Current Chat
-      socket?.emit("join-chat", parseInt(chatId));
+      socket?.emit("join-chat", chatId);
     });
     setText("");
   }, [chatId]);
@@ -86,6 +86,7 @@ const SingleChat = () => {
       </div>
       <div className='basis-5/6 overflow-y-scroll no-scrollbar sm:px-3'>
         <ChatMessages
+          chatId={chatId}
           chat={currentChat}
           setText={setText}
           isEditing={isEditing}
