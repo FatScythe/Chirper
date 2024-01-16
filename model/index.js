@@ -5,7 +5,11 @@ const Chat = require("./Chat");
 const Message = require("./Message");
 const Member = require("./Member");
 
-const sequelize = new Sequelize(db, user, password, { host, dialect });
+const sequelize = new Sequelize(db, user, password, {
+  host,
+  dialect,
+  logging: false,
+});
 let models = {
   User: User(sequelize, DataTypes),
   Chat: Chat(sequelize, DataTypes),
