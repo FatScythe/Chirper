@@ -39,23 +39,33 @@ app.use(notFoundMiddleware);
 const PORT = process.env.PORT || 5000;
 
 io.on("connection", (socket) => {
-  console.log("A user with id: " + socket.id + " connected");
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
 
   socket.on("connect-user", (user) => {
-    socket.join(user.id);
+    socket.join("user " + user.userId);
+  });
+
+  socket.on("disconnect-user", (user) => {
+    socket.leave("user " + user.id);
+  });
+
+  socket.on("updated-chat", (members) => {
+    for (const member of members) {
+      // Emit to everyone in the room including self
+      socket.nsp.to("user " + member).emit("receive-update", true);
+    }
   });
 
   socket.on("leave-chat", (chatId) => {
-    // console.log(socket.id, "left", chatId);
-    socket.leave(chatId);
+    let room = "chat " + chatId;
+    socket.leave(room);
   });
 
   socket.on("join-chat", (chatId) => {
-    // console.log(socket.id, "joined", chatId);
-    socket.join(chatId);
+    let room = "chat " + chatId;
+    socket.join(room);
   });
 
   socket.on("isTyping", (user, chat) => {
@@ -67,7 +77,8 @@ io.on("connection", (socket) => {
       message = user.name + " is typing...";
     }
 
-    socket.in(chat.id).emit("isMemberTyping", message);
+    let room = "chat " + chat.id;
+    socket.to(room).emit("isMemberTyping", message);
   });
 });
 
