@@ -36,7 +36,9 @@ const MessageInput = ({
     sendMessage(chatId, text)
       .then(() => {
         setText("");
-        getChats();
+        if (currentChat) {
+          socket?.emit("updated-chat", currentChat.members);
+        }
       })
       .then(() => navigate("/chats/" + chatId))
       .catch((err) => {
@@ -61,7 +63,12 @@ const MessageInput = ({
         setText("");
         getChats();
       })
-      .then(() => navigate("/chats/" + chatId))
+      .then(() => {
+        if (currentChat) {
+          socket?.emit("updated-chat", currentChat.members);
+        }
+        navigate("/chats/" + chatId);
+      })
       .catch((err) => {
         setIsEditing({ ...isEditing, editing: false });
         setText("");
