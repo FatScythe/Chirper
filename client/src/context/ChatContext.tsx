@@ -8,6 +8,7 @@ const ChatContext = createContext<ChatContextType>({
   getChats: async () => {},
   deleteChat: async () => {},
   setCurrentChat: () => null,
+  leaveGroup: async () => {},
 });
 
 const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -64,6 +65,26 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const leaveGroup = async (chatId: number) => {
+    try {
+      const response = await fetch("/api/v1/chat/leave", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ chatId }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data?.msg || "Couldn't leave group");
+        return;
+      }
+
+      alert(data.msg);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -72,6 +93,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         getChats,
         deleteChat,
         setCurrentChat,
+        leaveGroup,
         loading,
       }}
     >

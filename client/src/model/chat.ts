@@ -22,4 +22,5 @@ export type ChatContextType = {
   getChats: () => Promise<void>;
   deleteChat: (chatId: number) => Promise<void>;
   setCurrentChat: React.Dispatch<React.SetStateAction<IChat | null>>;
+  leaveGroup: (chatId: number) => Promise<void>;
 };
