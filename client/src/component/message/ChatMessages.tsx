@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // Types
 import { IChat } from "../../model/chat";
 import { IMessage } from "../../model/message";
 // Components
 import MessageBubble from "./MessageBubble";
+import Typing from "../chat/Typing";
 // Context
 import { useMessage } from "../../context/MessageContext";
 import { useChat } from "../../context/ChatContext";
-import { useNavigate } from "react-router-dom";
-import Typing from "../chat/Typing";
+import { useSocket } from "../../context/SocketContext";
 
 type Props = {
   chat: IChat | null;
+  chatId: string;
   isEditing: { editing: boolean; message: IMessage };
   setIsEditing: React.Dispatch<
     React.SetStateAction<{ editing: boolean; message: IMessage }>
@@ -19,7 +21,13 @@ type Props = {
   setText: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
+const ChatMessages = ({
+  chat,
+  chatId,
+  isEditing,
+  setIsEditing,
+  setText,
+}: Props) => {
   if (!chat) {
     return <></>;
   }
@@ -30,15 +38,18 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
 
   const [showOption, setShowOption] = useState(false); // To show delete and edit message modal
   const { deleteMessage, memberTyping } = useMessage();
-  const { getChats } = useChat();
+  const { getChats, currentChat } = useChat();
+  const { socket } = useSocket();
   const navigate = useNavigate();
 
   const handleDeleteMessage = async () => {
     setIsEditing({ ...isEditing, editing: false });
     deleteMessage(isEditing.message.id)
       .then(() => {
-        getChats();
-        navigate("/chats/" + chat.id);
+        if (currentChat) {
+          socket?.emit("updated-chat", currentChat.members);
+        }
+        navigate("/chats/" + chatId);
       })
       .catch((err) => alert(err.message));
   };
@@ -48,6 +59,12 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
   useEffect(() => {
     refMessageEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [chat]);
+
+  socket?.on("receive-update", (isUpdated) => {
+    if (isUpdated) {
+      getChats();
+    }
+  });
 
   return (
     <div className='h-fit  relative'>
