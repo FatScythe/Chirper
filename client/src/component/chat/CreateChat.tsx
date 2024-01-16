@@ -3,6 +3,8 @@ import { useState } from "react";
 import { AddIcon } from "../icon";
 import { chatType } from "../../model/chat";
 import { IUser } from "../../model/user";
+// Context
+import { useChat } from "../../context/ChatContext";
 
 const CreateChat = () => {
   const [showModal, setShowModal] = useState(false);
@@ -34,6 +36,7 @@ const Modal = ({ setShowModal }: ModalType) => {
   const [type, setType] = useState<chatType>("private");
   const [name, setName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+  const { getChats } = useChat();
 
   const createChat = async () => {
     try {
@@ -64,6 +67,7 @@ const Modal = ({ setShowModal }: ModalType) => {
         return;
       }
 
+      getChats();
       alert(data.msg);
       setShowModal(false);
     } catch (err) {
