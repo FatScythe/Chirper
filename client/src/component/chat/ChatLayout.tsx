@@ -55,7 +55,14 @@ const SingleChat = () => {
   const [text, setText] = useState(""); // To track input for messages
 
   useEffect(() => {
-    getSingleChat(chatId);
+    if (currentChat) {
+      // Leave Old Chat
+      socket?.emit("leave-chat", currentChat.id);
+    }
+    getSingleChat(chatId).then(() => {
+      // Join Current Chat
+      socket?.emit("join-chat", parseInt(chatId));
+    });
     setText("");
   }, [chatId]);
 
@@ -71,8 +78,6 @@ const SingleChat = () => {
     getSingleChat(chatId);
     return <div>Error...</div>;
   }
-
-  socket?.emit("chat", currentChat.id);
 
   return (
     <section className='flex flex-col justify-between h-screen gap-2 py-1'>
