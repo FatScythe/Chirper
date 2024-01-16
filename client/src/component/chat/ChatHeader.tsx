@@ -85,7 +85,7 @@ type optionType = {
 
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
-  const { deleteChat } = useChat();
+  const { deleteChat, getChats, leaveGroup } = useChat();
   const navigate = useNavigate();
 
   return (
@@ -100,7 +100,11 @@ const Option = ({ chat, setShowOption }: optionType) => {
             <>
               <li
                 className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
-                onClick={() => deleteChat(chat.id)}
+                onClick={() => {
+                  deleteChat(chat.id).then(() => {
+                    getChats();
+                  });
+                }}
               >
                 {chat.createdBy === user?.userId ? "Delete Chat" : "Leave Chat"}
               </li>
@@ -112,13 +116,26 @@ const Option = ({ chat, setShowOption }: optionType) => {
               </li>
               {chat.createdBy === user?.userId ? (
                 <li
-                  onClick={() => deleteChat(chat.id)}
+                  onClick={() => {
+                    deleteChat(chat.id).then(() => {
+                      navigate("/chats");
+                      getChats();
+                    });
+                  }}
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                 >
                   Delete Group
                 </li>
               ) : (
-                <li className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'>
+                <li
+                  className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
+                  onClick={() => {
+                    leaveGroup(chat.id).then(() => {
+                      navigate("/chats");
+                      getChats();
+                    });
+                  }}
+                >
                   Leave Group
                 </li>
               )}
