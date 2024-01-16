@@ -55,7 +55,7 @@ const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
 
         <div>
           <h2 className='font-semibold'>{name}</h2>
-          {memberTyping ? (
+          {memberTyping && chat.chatType === "group" ? (
             <small className='text-success font-semibold'>{memberTyping}</small>
           ) : (
             <small>
