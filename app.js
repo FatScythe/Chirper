@@ -44,11 +44,17 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 
-  // socket.on("connect-user", (user) => {
-  //   socket.join(user.id);
-  // })
+  socket.on("connect-user", (user) => {
+    socket.join(user.id);
+  });
 
-  socket.on("chat", (chatId) => {
+  socket.on("leave-chat", (chatId) => {
+    // console.log(socket.id, "left", chatId);
+    socket.leave(chatId);
+  });
+
+  socket.on("join-chat", (chatId) => {
+    // console.log(socket.id, "joined", chatId);
     socket.join(chatId);
   });
 
@@ -61,7 +67,7 @@ io.on("connection", (socket) => {
       message = user.name + " is typing...";
     }
 
-    socket.to(chat.id).emit("isMemberTyping", message);
+    socket.in(chat.id).emit("isMemberTyping", message);
   });
 });
 
