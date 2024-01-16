@@ -8,6 +8,7 @@ import MessageBubble from "./MessageBubble";
 import { useMessage } from "../../context/MessageContext";
 import { useChat } from "../../context/ChatContext";
 import { useNavigate } from "react-router-dom";
+import Typing from "../chat/Typing";
 
 type Props = {
   chat: IChat | null;
@@ -28,7 +29,7 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
   }
 
   const [showOption, setShowOption] = useState(false); // To show delete and edit message modal
-  const { deleteMessage } = useMessage();
+  const { deleteMessage, memberTyping } = useMessage();
   const { getChats } = useChat();
   const navigate = useNavigate();
 
@@ -87,6 +88,7 @@ const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
           />
         );
       })}
+      {memberTyping && chat.chatType === "private" && <Typing />}
       <div ref={refMessageEnd}></div>
     </div>
   );
