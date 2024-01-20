@@ -26,11 +26,23 @@ const MessageBubble = ({
     return <Navigate to='/' />;
   }
 
+  // Checks if message belongs to the curret user
   const isUserMessage = user.userId === message.sender;
-  const time =
-    new Date(message?.updatedAt || 0).getHours().toString() +
-    ":" +
-    new Date(message?.updatedAt || 0).getMinutes().toString();
+
+  // Reformat hour and minute string to padStart or padEnd with 0
+  const hour =
+    new Date(message?.updatedAt || 0).getHours().toString().length > 1
+      ? new Date(message?.updatedAt || 0).getHours().toString()
+      : "0" + new Date(message?.updatedAt || 0).getHours().toString();
+
+  const minute =
+    new Date(message?.updatedAt || 0).getMinutes().toString().length > 1
+      ? new Date(message?.updatedAt || 0).getMinutes().toString()
+      : new Date(message?.updatedAt || 0).getMinutes().toString() + "0";
+
+  const time = hour + ":" + minute;
+
+  // Check if message was editted
   const isMessageEditted =
     new Date(message?.createdAt || 0).getTime() <
     new Date(message?.updatedAt || 0).getTime();
@@ -47,8 +59,8 @@ const MessageBubble = ({
         } p-0.5 rounded-md gap-1 max-w-[60%] text-pretty overflow-clip`}
       >
         <p className='self-start mr-4 break-all'>{message.text}</p>
-        <small className='self-end text-[0.5rem] text-gray-200'>
-          {isMessageEditted ? "Editted at: " + time : time}
+        <small className='self-end text-[0.5rem] text-gray-200 font-semibold'>
+          {isMessageEditted ? `Editted at: ${time}` : time}
         </small>
       </div>
       <button
