@@ -84,9 +84,8 @@ const SingleChat = () => {
       <div className='basis-1/12 p-2 flex justify-start items-center gap-4'>
         <ChatHeader chat={currentChat} setIsChatsOpen={setIsChatsOpen} />
       </div>
-      <div className='basis-5/6 overflow-y-scroll no-scrollbar sm:px-3'>
+      <div className='basis-5/6 h-full overflow-y-scroll no-scrollbar sm:px-3'>
         <ChatMessages
-          chatId={chatId}
           chat={currentChat}
           setText={setText}
           isEditing={isEditing}
