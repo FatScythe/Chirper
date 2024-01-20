@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 // Icon
 import { EditIcon, SendIcon } from "../icon";
 // Types
@@ -28,9 +27,7 @@ const MessageInput = ({
   setIsEditing,
 }: Props) => {
   const { sendMessage, editMessage } = useMessage();
-  const { getChats, currentChat } = useChat();
-
-  const navigate = useNavigate();
+  const { currentChat } = useChat();
 
   const handleSendMessage = () => {
     sendMessage(chatId, text)
@@ -40,7 +37,6 @@ const MessageInput = ({
           socket?.emit("updated-chat", currentChat.members);
         }
       })
-      .then(() => navigate("/chats/" + chatId))
       .catch((err) => {
         alert(err?.message || "Couldn't send message");
       });
@@ -61,13 +57,9 @@ const MessageInput = ({
       .then(() => {
         setIsEditing({ ...isEditing, editing: false });
         setText("");
-        getChats();
-      })
-      .then(() => {
         if (currentChat) {
           socket?.emit("updated-chat", currentChat.members);
         }
-        navigate("/chats/" + chatId);
       })
       .catch((err) => {
         setIsEditing({ ...isEditing, editing: false });
@@ -82,6 +74,9 @@ const MessageInput = ({
 
   const [selfTyping, setSelfTyping] = useState(false); // To track if the current user is typing
 
+  socket?.off("isMemberTyping", () => {
+    setMemberTyping("");
+  });
   socket?.on("isMemberTyping", (message) => {
     setMemberTyping(message);
   });
@@ -100,6 +95,9 @@ const MessageInput = ({
         }}
         onBlur={() => {
           setSelfTyping(!selfTyping);
+          socket?.off("isMemberTyping", () => {
+            setMemberTyping("");
+          });
         }}
       />
       <button

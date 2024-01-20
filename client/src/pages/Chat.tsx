@@ -8,6 +8,7 @@ import AllChats from "../component/chat/AllChats";
 import CreateChat from "../component/chat/CreateChat";
 // Icon
 import { LogoutIcon } from "../component/icon";
+import { useChat } from "../context/ChatContext";
 
 type ContextType = {
   setIsChatsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +19,15 @@ const Chat = () => {
   const navigate = useNavigate();
   const { logout, user } = useAuth();
   const { socket } = useSocket();
+  const { getChats } = useChat();
+
+  socket?.off("receive-update"); // Diconnect listener
+  // Connect listener
+  socket?.on("receive-update", (isUpdated) => {
+    if (isUpdated) {
+      getChats();
+    }
+  });
 
   return (
     <section className='grid grid-cols-12 h-screen relative sm:static bg-dark/90 text-white overflow-hidden'>
