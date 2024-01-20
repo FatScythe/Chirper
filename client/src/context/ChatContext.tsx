@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { ChatContextType, IChat } from "../model/chat";
+import { useAuth } from "./AuthContext";
 
 const ChatContext = createContext<ChatContextType>({
   loading: false,
@@ -19,6 +20,8 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   const [myChats, setMyChats] = useState<{ nb: number; chats: IChat[] } | null>(
     null
   ); // Tracks all users chats
+
+  const { user } = useAuth();
 
   const getChats = async () => {
     try {
@@ -44,8 +47,8 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    getChats();
-  }, []);
+    if (user) getChats();
+  }, [user]);
 
   const deleteChat = async (chatId: number) => {
     try {

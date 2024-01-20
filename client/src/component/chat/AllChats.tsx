@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 // Component
 import ChatItem from "./ChatItem";
 // Context
@@ -12,13 +11,9 @@ type Props = {
 };
 
 const AllChats = (props: Props) => {
-  const { loading, myChats, getChats, setCurrentChat } = useChat();
+  const { loading, myChats } = useChat();
 
   useTitle("All chats");
-  useEffect(() => {
-    getChats();
-    setCurrentChat(null);
-  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
