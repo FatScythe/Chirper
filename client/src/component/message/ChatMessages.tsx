@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 // Types
 import { IChat } from "../../model/chat";
 import { IMessage } from "../../model/message";
@@ -13,7 +12,6 @@ import { useSocket } from "../../context/SocketContext";
 
 type Props = {
   chat: IChat | null;
-  chatId: string;
   isEditing: { editing: boolean; message: IMessage };
   setIsEditing: React.Dispatch<
     React.SetStateAction<{ editing: boolean; message: IMessage }>
@@ -21,13 +19,7 @@ type Props = {
   setText: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const ChatMessages = ({
-  chat,
-  chatId,
-  isEditing,
-  setIsEditing,
-  setText,
-}: Props) => {
+const ChatMessages = ({ chat, isEditing, setIsEditing, setText }: Props) => {
   if (!chat) {
     return <></>;
   }
@@ -38,9 +30,8 @@ const ChatMessages = ({
 
   const [showOption, setShowOption] = useState(false); // To show delete and edit message modal
   const { deleteMessage, memberTyping } = useMessage();
-  const { getChats, currentChat } = useChat();
+  const { currentChat } = useChat();
   const { socket } = useSocket();
-  const navigate = useNavigate();
 
   const handleDeleteMessage = async () => {
     setIsEditing({ ...isEditing, editing: false });
@@ -49,7 +40,6 @@ const ChatMessages = ({
         if (currentChat) {
           socket?.emit("updated-chat", currentChat.members);
         }
-        navigate("/chats/" + chatId);
       })
       .catch((err) => alert(err.message));
   };
@@ -60,14 +50,8 @@ const ChatMessages = ({
     refMessageEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [chat]);
 
-  socket?.on("receive-update", (isUpdated) => {
-    if (isUpdated) {
-      getChats();
-    }
-  });
-
   return (
-    <div className='h-fit  relative'>
+    <div className='h-fit relative'>
       {showOption && (
         <div
           className='absolute z-20 bg-transparent -top-1/4 left-0 right-0 -bottom-1/4'
@@ -106,7 +90,12 @@ const ChatMessages = ({
         );
       })}
       {memberTyping && chat.chatType === "private" && <Typing />}
-      <div ref={refMessageEnd}></div>
+      <div
+        ref={refMessageEnd}
+        className={`${
+          memberTyping ? "h-14" : "h-0"
+        } transition-all duration-700`}
+      ></div>
     </div>
   );
 };
