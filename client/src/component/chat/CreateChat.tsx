@@ -1,6 +1,6 @@
 import { useState } from "react";
 // Icon
-import { AddIcon } from "../icon";
+import { AddIcon, UsersIcon } from "../icon";
 import { chatType } from "../../model/chat";
 import { IUser } from "../../model/user";
 // Context
@@ -183,7 +183,7 @@ const SearchUser = ({
   };
 
   return (
-    <main className=''>
+    <main>
       <input
         type='search'
         placeholder='Search users'
@@ -197,6 +197,12 @@ const SearchUser = ({
         }}
       />
 
+      {selectedUsers.length > 0 && (
+        <h1 className='my-2 flex justify-start items-center gap-2'>
+          <UsersIcon className='w-6 h-6' />
+          <span>Participants</span>
+        </h1>
+      )}
       <div className='flex justify-start items-center gap-2 my-2'>
         {selectedUsers.length > 0 &&
           selectedUsers.map((user) => (
