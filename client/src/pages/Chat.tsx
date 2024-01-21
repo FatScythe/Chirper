@@ -49,7 +49,9 @@ const Chat = () => {
             onClick={() => {
               // Disconnect user from socket io
               socket?.emit("disconnect-user", user);
+              alert("Are you sure you want to logout?");
               logout();
+              localStorage.removeItem("chats");
             }}
             title='logout'
           >
