@@ -4,7 +4,8 @@ import { AddIcon, UsersIcon } from "../icon";
 import { chatType } from "../../model/chat";
 import { IUser } from "../../model/user";
 // Context
-import { useChat } from "../../context/ChatContext";
+import { useSocket } from "../../context/SocketContext";
+import { useAuth } from "../../context/AuthContext";
 
 const CreateChat = () => {
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +37,8 @@ const Modal = ({ setShowModal }: ModalType) => {
   const [type, setType] = useState<chatType>("private");
   const [name, setName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
-  const { getChats } = useChat();
+  const { user } = useAuth();
+  const { socket } = useSocket();
 
   const createChat = async () => {
     try {
@@ -67,7 +69,7 @@ const Modal = ({ setShowModal }: ModalType) => {
         return;
       }
 
-      getChats();
+      socket?.emit("updated-chat", [user?.userId, ...memberIDs]);
       alert(data.msg);
       setShowModal(false);
     } catch (err) {
