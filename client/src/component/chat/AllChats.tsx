@@ -17,7 +17,18 @@ const AllChats = (props: Props) => {
   useTitle("All chats");
 
   useEffect(() => {
-    if (!localStorage.getItem("chats")) {
+    let localChats = localStorage.getItem("chats");
+    if (localChats) {
+      /*
+        If local storage chats exist and the length is not equal to the database chats,
+        Update the local storage
+      */
+      if (myChats && myChats.chats.length !== JSON.parse(localChats).length) {
+        localStorage.setItem("chats", JSON.stringify(myChats.chats));
+      }
+    } else {
+      // Makes a copy of all the chat on the local storage if it doesn't already exist
+      // To-do: Find specific difference and update local storage, instead of updating all
       if (myChats) {
         localStorage.setItem("chats", JSON.stringify(myChats.chats));
       }
