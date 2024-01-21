@@ -1,4 +1,4 @@
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 // Components
 import MessageInput from "../message/MessageInput";
@@ -11,10 +11,13 @@ import ChatHeader from "./ChatHeader";
 // Context
 import { useChat } from "../../context/ChatContext";
 import { useSocket } from "../../context/SocketContext";
+// Types
+import { IChat } from "../../model/chat";
 
 const SingleChat = () => {
   const { id: chatId } = useParams();
   useTitle("Chat");
+  const navigate = useNavigate();
 
   if (chatId == undefined) {
     return <Navigate to='/' />;
@@ -35,7 +38,7 @@ const SingleChat = () => {
       if (!response.ok) {
         setLoading(false);
         setError(true);
-        alert(data?.msg || "Couldn't get chat info");
+        navigate("/chats");
         return;
       }
 
@@ -65,6 +68,23 @@ const SingleChat = () => {
     });
     setText("");
   }, [chatId]);
+
+  useEffect(() => {
+    if (currentChat) {
+      // Update local storage copy of the chat when
+      // A single chat component is mounted
+      let chats = localStorage.getItem("chats");
+      if (chats) {
+        let result: IChat[] = JSON.parse(chats);
+
+        let updatedChats = result.filter((chat) => chat.id !== currentChat.id);
+
+        updatedChats = [currentChat, ...updatedChats];
+
+        localStorage.setItem("chats", JSON.stringify(updatedChats));
+      }
+    }
+  }, [currentChat]);
 
   if (loading) {
     return <div>Loading...</div>;
