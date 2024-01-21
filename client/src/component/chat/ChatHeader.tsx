@@ -6,6 +6,7 @@ import { ChevronLeftIcon, OptionIcon } from "../icon";
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
 import { useMessage } from "../../context/MessageContext";
+import { useSocket } from "../../context/SocketContext";
 // Type
 import { IChat } from "../../model/chat";
 // Utils
@@ -85,7 +86,8 @@ type optionType = {
 
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
-  const { deleteChat, getChats, leaveGroup } = useChat();
+  const { deleteChat, leaveGroup, currentChat } = useChat();
+  const { socket } = useSocket();
   const navigate = useNavigate();
 
   return (
@@ -102,7 +104,8 @@ const Option = ({ chat, setShowOption }: optionType) => {
                 className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                 onClick={() => {
                   deleteChat(chat.id).then(() => {
-                    getChats();
+                    socket?.emit("updated-chat", currentChat?.members);
+                    navigate("/chats");
                   });
                 }}
               >
@@ -118,8 +121,8 @@ const Option = ({ chat, setShowOption }: optionType) => {
                 <li
                   onClick={() => {
                     deleteChat(chat.id).then(() => {
+                      socket?.emit("updated-chat", currentChat?.members);
                       navigate("/chats");
-                      getChats();
                     });
                   }}
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
@@ -131,8 +134,8 @@ const Option = ({ chat, setShowOption }: optionType) => {
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                   onClick={() => {
                     leaveGroup(chat.id).then(() => {
+                      socket?.emit("updated-chat", currentChat?.members);
                       navigate("/chats");
-                      getChats();
                     });
                   }}
                 >
