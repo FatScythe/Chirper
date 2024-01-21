@@ -84,6 +84,17 @@ type optionType = {
   setShowOption: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+const removeChatLocal = (chatId: number) => {
+  // This fn removes a single chat from local storage
+  if (localStorage.getItem("chats")) {
+    let myChats: IChat[] = JSON.parse(localStorage.getItem("chats") || "[]");
+
+    myChats = myChats.filter((chat) => chat.id !== chatId);
+
+    localStorage.setItem("chats", JSON.stringify(myChats));
+  }
+};
+
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
   const { deleteChat, leaveGroup, currentChat } = useChat();
@@ -104,7 +115,10 @@ const Option = ({ chat, setShowOption }: optionType) => {
                 className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                 onClick={() => {
                   deleteChat(chat.id).then(() => {
-                    socket?.emit("updated-chat", currentChat?.members);
+                    if (currentChat) {
+                      removeChatLocal(currentChat.id);
+                      socket?.emit("updated-chat", currentChat.members);
+                    }
                     navigate("/chats");
                   });
                 }}
@@ -121,7 +135,10 @@ const Option = ({ chat, setShowOption }: optionType) => {
                 <li
                   onClick={() => {
                     deleteChat(chat.id).then(() => {
-                      socket?.emit("updated-chat", currentChat?.members);
+                      if (currentChat) {
+                        removeChatLocal(currentChat.id);
+                        socket?.emit("updated-chat", currentChat.members);
+                      }
                       navigate("/chats");
                     });
                   }}
@@ -134,7 +151,10 @@ const Option = ({ chat, setShowOption }: optionType) => {
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                   onClick={() => {
                     leaveGroup(chat.id).then(() => {
-                      socket?.emit("updated-chat", currentChat?.members);
+                      if (currentChat) {
+                        removeChatLocal(currentChat.id);
+                        socket?.emit("updated-chat", currentChat.members);
+                      }
                       navigate("/chats");
                     });
                   }}
