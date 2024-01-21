@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 // Component
 import ChatItem from "./ChatItem";
 // Context
@@ -15,6 +16,14 @@ const AllChats = (props: Props) => {
 
   useTitle("All chats");
 
+  useEffect(() => {
+    if (!localStorage.getItem("chats")) {
+      if (myChats) {
+        localStorage.setItem("chats", JSON.stringify(myChats.chats));
+      }
+    }
+  }, [myChats]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -22,12 +31,17 @@ const AllChats = (props: Props) => {
   if (!myChats && !loading) {
     return <div>Error...</div>;
   }
-  if (myChats && myChats.nb < 1) {
-    <div>You have no chats yet</div>;
-  }
 
   if (!myChats) {
     return <div>Error...</div>;
+  }
+
+  if (myChats && myChats.nb == 0) {
+    return (
+      <div className='text-center my-10 text-pretty text-lg'>
+        You have no chats
+      </div>
+    );
   }
 
   return (
