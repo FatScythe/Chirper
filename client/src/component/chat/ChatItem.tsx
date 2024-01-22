@@ -10,6 +10,7 @@ import { useMessage } from "../../context/MessageContext";
 // Util
 import { getChatInfo } from "../../utils/getChatInfo";
 import url from "../../utils/url";
+import getUnreadMessage from "../../utils/getUnreadMessage";
 
 type Props = {
   chat: IChat;
@@ -27,42 +28,7 @@ const ChatItem = (props: Props) => {
     return <Navigate to='/' />;
   }
 
-  const getUnreadMessage = (chat: IChat): number => {
-    /*
-      // DANGER - To tired to think for a better solution and i don't want to make
-      multiple patch calls to the server when a message is read
-      This fn takes the current chat and gets it copy in the local storage
-      returns the difference btw the live chat and local storage chat 
-    */
-    if (localStorage.getItem("chats")) {
-      let myLocalChats: IChat[] = JSON.parse(
-        localStorage.getItem("chats") || "[]"
-      );
-      myLocalChats = myLocalChats.filter(
-        (singleChat) => chat.id === singleChat.id
-      );
-
-      let chatMessages = myLocalChats[0]?.messages;
-
-      if (chatMessages && chatMessages.length > 0 && chat.messages) {
-        let messageDiff = chat.messages.length - chatMessages.length;
-
-        // If the lastmessage belongs to the current user then, they couldn't have
-        // unread
-        if (
-          chat.messages.length > 0 &&
-          chat.messages[chat.messages.length - 1].sender === user.userId
-        ) {
-          return 0;
-        }
-
-        return Math.abs(messageDiff);
-      }
-    }
-    return 0;
-  };
-
-  let unreadMsg = getUnreadMessage(chat);
+  let unreadMsg = getUnreadMessage(chat, user);
 
   return (
     <NavLink
