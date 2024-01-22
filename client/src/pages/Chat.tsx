@@ -47,11 +47,12 @@ const Chat = () => {
           <button
             className='p-2 rounded-full hover:bg-danger'
             onClick={() => {
-              // Disconnect user from socket io
-              socket?.emit("disconnect-user", user);
-              alert("Are you sure you want to logout?");
-              logout();
-              localStorage.removeItem("chats");
+              if (window.confirm("Are you sure you want to logout?")) {
+                // Disconnect user from socket io
+                socket?.emit("disconnect-user", user);
+                logout();
+                localStorage.removeItem("chats");
+              }
             }}
             title='logout'
           >
