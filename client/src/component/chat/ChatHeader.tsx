@@ -97,7 +97,7 @@ const removeChatLocal = (chatId: number) => {
 
 const Option = ({ chat, setShowOption }: optionType) => {
   const { user } = useAuth();
-  const { deleteChat, leaveGroup, currentChat } = useChat();
+  const { deleteChat, leaveGroup, currentChat, setCurrentChat } = useChat();
   const { socket } = useSocket();
   const navigate = useNavigate();
 
@@ -114,13 +114,17 @@ const Option = ({ chat, setShowOption }: optionType) => {
               <li
                 className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                 onClick={() => {
-                  deleteChat(chat.id).then(() => {
-                    if (currentChat) {
-                      removeChatLocal(currentChat.id);
-                      socket?.emit("updated-chat", currentChat.members);
-                    }
-                    navigate("/chats");
-                  });
+                  setShowOption(false);
+                  const question = "Are you sure?";
+                  if (window.confirm(question)) {
+                    deleteChat(chat.id).then(() => {
+                      if (currentChat) {
+                        removeChatLocal(currentChat.id);
+                        socket?.emit("updated-chat", currentChat.members);
+                      }
+                      navigate("/chats");
+                    });
+                  }
                 }}
               >
                 {chat.createdBy === user?.userId ? "Delete Chat" : "Leave Chat"}
@@ -134,13 +138,17 @@ const Option = ({ chat, setShowOption }: optionType) => {
               {chat.createdBy === user?.userId ? (
                 <li
                   onClick={() => {
-                    deleteChat(chat.id).then(() => {
-                      if (currentChat) {
-                        removeChatLocal(currentChat.id);
-                        socket?.emit("updated-chat", currentChat.members);
-                      }
-                      navigate("/chats");
-                    });
+                    setShowOption(false);
+                    const question = "Are you sure delete group?";
+                    if (window.confirm(question)) {
+                      deleteChat(chat.id).then(() => {
+                        if (currentChat) {
+                          removeChatLocal(currentChat.id);
+                          socket?.emit("updated-chat", currentChat.members);
+                        }
+                        navigate("/chats");
+                      });
+                    }
                   }}
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                 >
@@ -150,13 +158,17 @@ const Option = ({ chat, setShowOption }: optionType) => {
                 <li
                   className='w-full py-1 hover:bg-danger hover:text-white cursor-pointer duration-200'
                   onClick={() => {
-                    leaveGroup(chat.id).then(() => {
-                      if (currentChat) {
-                        removeChatLocal(currentChat.id);
-                        socket?.emit("updated-chat", currentChat.members);
-                      }
-                      navigate("/chats");
-                    });
+                    setShowOption(false);
+                    const question = "Are you sure you want to leave group ?";
+                    if (window.confirm(question)) {
+                      leaveGroup(chat.id).then(() => {
+                        if (currentChat) {
+                          removeChatLocal(currentChat.id);
+                          socket?.emit("updated-chat", currentChat.members);
+                        }
+                        navigate("/chats");
+                      });
+                    }
                   }}
                 >
                   Leave Group
@@ -167,7 +179,10 @@ const Option = ({ chat, setShowOption }: optionType) => {
 
           <li
             className='hidden sm:block w-full py-1 hover:bg-primary hover:text-white cursor-pointer duration-200'
-            onClick={() => navigate("/chats")}
+            onClick={() => {
+              navigate("/chats");
+              setCurrentChat(null);
+            }}
           >
             Close Chat
           </li>
