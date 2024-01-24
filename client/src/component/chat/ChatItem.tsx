@@ -1,8 +1,6 @@
 import { NavLink, Navigate } from "react-router-dom";
 // Types
 import { IChat } from "../../model/chat";
-// Image
-import groupAvatar from "../../assets/avatars.png";
 // Context
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
@@ -37,11 +35,7 @@ const ChatItem = (props: Props) => {
       onClick={() => setIsChatsOpen(!isChatsOpen)}
     >
       <img
-        src={
-          chat.chatType === "private"
-            ? url + getChatInfo(chat, user).image
-            : groupAvatar
-        }
+        src={url + getChatInfo(chat, user).image}
         className='h-8 w-8 rounded-full'
       />
       <main className='w-4/5 text-ellipsis overflow-hidden'>

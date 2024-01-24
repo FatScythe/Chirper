@@ -48,8 +48,8 @@ const ChatHeader = ({ chat, setIsChatsOpen }: Props) => {
             <ChevronLeftIcon className='w-6 h-6' />
           </button>
           <img
-            src={chat.chatType === "private" ? url + image : image || ""}
-            className='rounded-full w-8 h-8 border object-contain'
+            src={url + image}
+            className='rounded-full w-10 h-10 border-2 border-primary p-1 border-l-0 border-t-0 object-cover'
             alt={name ? name : "profile picture"}
           />
         </div>

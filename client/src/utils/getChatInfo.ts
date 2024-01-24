@@ -1,8 +1,6 @@
 // Types
 import { IChat } from "../model/chat";
 import { IUser } from "../model/user";
-// Image
-import groupAvatar from "../assets/avatars.png";
 
 export const getChatInfo = (chat: IChat, user: IUser) => {
   /*
@@ -53,7 +51,7 @@ export const getChatInfo = (chat: IChat, user: IUser) => {
   } else {
     return {
       name: chat?.name || "Group " + chat.id, // Add a default group image
-      image: groupAvatar,
+      image: "/group.png",
       lastmessage,
       members,
     };
