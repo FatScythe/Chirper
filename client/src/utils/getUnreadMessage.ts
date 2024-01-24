@@ -37,7 +37,6 @@ const getUnreadMessage = (chat: IChat, user: IUser): number => {
 
       // If the database lastmessage belongs to the current user then, they couldn't have unread messages
       if (lastMessage.sender === user.userId) {
-        console.log("Belongs to me");
         return 0;
       }
     } else {
